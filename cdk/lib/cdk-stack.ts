@@ -71,7 +71,7 @@ export class CdkStack extends Stack {
 
     const viteSiteOAI = new cloudfront.OriginAccessIdentity(
       this,
-      "OriginAccessControl",
+      "OriginAccessIdentity",
       {
         comment: "Vite site OAI",
       },
@@ -98,7 +98,6 @@ export class CdkStack extends Stack {
           }),
           viewerProtocolPolicy:
             cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
-          // viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.ALLOW_ALL,
           allowedMethods: cloudfront.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
         },
         defaultRootObject: "index.html",
