@@ -1,5 +1,5 @@
 const styles = {
-  sectionText: "text-white font-bold md:text-[50px] sm:text-[50px] text-[40px]",
+  sectionText: "text-white font-bold text-[36px] md:text-[50px]",
 };
 
 export { styles };
