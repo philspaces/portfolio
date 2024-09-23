@@ -61,9 +61,13 @@ export class CdkStack extends Stack {
       outputs: [buildOutput],
     });
 
+    // ** Create the S3 bucket to store the website file
+    // Note: Do not use the websiteIndexDocument or websiteErrorDocument props of
+    // the Bucket construct if you pan to use CloudFront to front the website.
+    // Passing these will cause the Bucket to be automatically configured as
+    // “website enabled”, which is not intended for CloudFront setup.
+    //       accessControl: s3.BucketAccessControl.PUBLIC_READ,
     const bucket = new s3.Bucket(this, "ViteSiteBucket", {
-      websiteIndexDocument: "index.html",
-      websiteErrorDocument: "index.html", // SPA routing fallback
       removalPolicy: RemovalPolicy.DESTROY,
       autoDeleteObjects: true, // Automatically delete objects when stack is deleted
       publicReadAccess: false, // No public access, served through CloudFront,
