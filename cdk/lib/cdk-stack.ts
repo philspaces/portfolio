@@ -78,6 +78,7 @@ export class CdkStack extends Stack {
     );
 
     // Grant CloudFront OAI access to the S3 bucket
+    bucket.grantRead(viteSiteOAI);
     bucket.addToResourcePolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,
@@ -113,6 +114,7 @@ export class CdkStack extends Stack {
 
     // Output the CloudFront distribution domain name
     new CfnOutput(this, "DistributionDomainName", {
+      description: "The CloudFront URL:",
       value: distribution.distributionDomainName,
     });
 
