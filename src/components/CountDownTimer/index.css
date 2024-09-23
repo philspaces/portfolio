@@ -52,7 +52,7 @@
     place-content: center;
     place-items: center;
     font-size: 8vw;
-    color: #e74c3c; /* Replace $soft-red with the actual color value */
+    color: rgba(0, 188, 212, 0.9); /* Replace $soft-red with the actual color value */
 }
 
 .countdown__container .countdown__card .countdown__card__bg .countdown__card__number::before {
