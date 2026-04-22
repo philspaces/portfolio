@@ -1,5 +1,3 @@
-import React from 'react';
-
 const CountDownSquare = ({ label, number, cardRef }) => {
   return (
     <div className="countdown__card">
