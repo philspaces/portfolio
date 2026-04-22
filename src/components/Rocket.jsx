@@ -1,99 +1,53 @@
 import { useAnimations, useGLTF } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
-import { Suspense, useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import rocket from "../assets/3d/cosmonaut_on_a_rocket.glb";
 import CanvasLoader from "./CanvasLoader.jsx";
 
-const Rocket = ({ scale, position }) => {
-  const rocketRef = useRef();
+const RocketModel = ({ scale, position, rotation }) => {
   const { scene, animations } = useGLTF(rocket);
-  const { actions } = useAnimations(animations, rocketRef);
+  const clonedScene = useMemo(() => scene.clone(), [scene]);
+  const { actions } = useAnimations(animations, clonedScene);
 
   useEffect(() => {
-    actions["Take 001"].play();
+    const firstAction = Object.values(actions).find(Boolean);
+    firstAction?.play();
   }, [actions]);
 
   return (
-    <mesh
-      ref={rocketRef}
-      position={position}
-      scale={scale}
-      rotation={[0, 0.5, 0.5]}
-    >
-      <primitive object={scene} />
-    </mesh>
+    <primitive object={clonedScene} position={position} scale={scale} rotation={rotation} />
   );
 };
 
-const RocketCanvas = ({ scrollContainer }) => {
-  const [rotationX, setRotationX] = useState(0);
-  const [rotationY, setRotationY] = useState(0);
-  const [scale, setScale] = useState([0.005, 0.005, 0.005]);
-  const [position, setPosition] = useState([0.2, -0.7, 0]);
+const RocketCanvas = () => {
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      const scrollTop = scrollContainer.current.scrollTop;
-      const rotationXValue = scrollTop * -0.0006;
-      const rotationYValue = scrollTop * -0.00075;
-      setRotationX(rotationXValue);
-      setRotationY(rotationYValue);
-    };
+    const mediaQuery = window.matchMedia("(max-width: 768px)");
+    const handleChange = (event) => setIsMobile(event.matches);
 
-    const handleResize = () => {
-      if (window.innerWidth < 768) {
-        setScale([0.005, 0.005, 0.005]);
-      } else if (window.innerWidth < 1024) {
-        setScale([0.005, 0.005, 0.005]);
-      } else if (window.innerWidth < 1280) {
-        setScale([0.005, 0.005, 0.005]);
-      } else if (window.innerWidth < 1536) {
-        setScale([0.005, 0.005, 0.005]);
-      } else {
-        setScale([0.007, 0.007, 0.007]);
-      }
-    };
-
-    handleResize();
-    window.addEventListener("scroll", handleScroll);
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("resize", handleResize);
-    };
-  }, [scrollContainer]);
+    setIsMobile(mediaQuery.matches);
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
+  }, []);
 
   return (
-    <Canvas
-      className={`w-full h-screen bg-transparent z-10`}
-      camera={{ near: 0.1, far: 1000 }}
-    >
+    <Canvas className="h-full w-full bg-transparent" camera={{ position: [0, 0, 4.5], fov: 35, near: 0.1, far: 1000 }}>
       <Suspense fallback={<CanvasLoader />}>
-        <directionalLight position={[1, 1, 1]} intensity={2} />
-        <ambientLight intensity={0.5} />
-        <pointLight position={[10, 5, 10]} intensity={2} />
-        <spotLight
-          position={[0, 50, 10]}
-          angle={0.15}
-          penumbra={1}
-          intensity={2}
-        />
-        <hemisphereLight
-          skyColor="#b1e1ff"
-          groundColor="#000000"
-          intensity={1}
-        />
-
-        <Rocket
-          rotationX={rotationX}
-          rotationY={rotationY}
-          scale={scale}
-          position={position}
+        <ambientLight intensity={0.7} />
+        <directionalLight position={[2, 2, 3]} intensity={2.4} />
+        <pointLight position={[-3, 2, 3]} intensity={1.2} />
+        <hemisphereLight skyColor="#b1e1ff" groundColor="#000000" intensity={0.9} />
+        <RocketModel
+          scale={isMobile ? [0.0045, 0.0045, 0.0045] : [0.0062, 0.0062, 0.0062]}
+          position={isMobile ? [0, -0.9, 0] : [1.2, -0.55, 0]}
+          rotation={[-0.15, 0.7, 0.25]}
         />
       </Suspense>
     </Canvas>
   );
 };
+
+useGLTF.preload(rocket);
 
 export default RocketCanvas;
