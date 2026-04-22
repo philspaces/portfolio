@@ -1,5 +1,10 @@
 import { motion } from "framer-motion";
-import { featuredProjects, focusAreas } from "../contants";
+import {
+  featuredProjects,
+  focusAreas,
+  proofStats,
+  privateWorkSignals,
+} from "../contants";
 import { textVariant, fadeIn } from "../utils/motion";
 
 const toneClasses = {
@@ -8,7 +13,7 @@ const toneClasses = {
   violet: "border-violet-400/40 bg-violet-500/10",
 };
 
-const ProjectCard = ({ name, description, stack, href, tone, index }) => {
+const ProjectCard = ({ name, eyebrow, description, stack, href, tone, index }) => {
   return (
     <motion.a
       href={href}
@@ -22,7 +27,10 @@ const ProjectCard = ({ name, description, stack, href, tone, index }) => {
     >
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h3 className="text-2xl font-semibold text-white">{name}</h3>
+          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-400">
+            {eyebrow}
+          </p>
+          <h3 className="mt-3 text-2xl font-semibold text-white">{name}</h3>
           <p className="mt-3 max-w-xl text-sm leading-7 text-slate-300 sm:text-base">
             {description}
           </p>
@@ -60,12 +68,12 @@ const Portfolio = () => {
             Selected work
           </p>
           <h2 className="mt-4 text-4xl font-bold text-white sm:text-5xl">
-            The current site needed less spectacle and more proof.
+            Better proof, less vague “builder” branding.
           </h2>
           <p className="mt-6 text-base leading-8 text-slate-300 sm:text-lg">
-            So this section does the obvious thing: it points at actual work.
-            Not everything here is polished to the same degree, but these
-            projects reflect the direction clearly.
+            The site should not make people guess what I do. These projects are
+            the clearest public examples of the direction: automation, frontend
+            systems, AI tooling, and product-minded engineering.
           </p>
         </motion.div>
 
@@ -73,6 +81,61 @@ const Portfolio = () => {
           {featuredProjects.map((project, index) => (
             <ProjectCard key={project.name} index={index} {...project} />
           ))}
+        </div>
+      </section>
+
+      <section id="proof" className="mx-auto max-w-7xl px-6 py-10 sm:px-10 lg:px-16">
+        <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
+          <motion.div
+            variants={textVariant(0.05)}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.2 }}
+          >
+            <p className="text-sm font-semibold uppercase tracking-[0.28em] text-quaternary">
+              Proof of work
+            </p>
+            <h2 className="mt-4 text-4xl font-bold text-white sm:text-5xl">
+              Public GitHub is only part of the signal.
+            </h2>
+            <p className="mt-6 max-w-2xl text-base leading-8 text-slate-300 sm:text-lg">
+              That matters, because a lot of the most current work is private.
+              So the right read is not “judge everything by stars”. It is “look
+              at the technical range, then assume there is more behind the
+              curtain.”
+            </p>
+          </motion.div>
+
+          <div className="grid gap-4">
+            <div className="grid gap-4 sm:grid-cols-2">
+              {proofStats.map((stat, index) => (
+                <motion.div
+                  key={stat.label}
+                  variants={fadeIn("up", "spring", index * 0.08, 0.55)}
+                  initial="hidden"
+                  whileInView="show"
+                  viewport={{ once: true, amount: 0.2 }}
+                  className="rounded-3xl border border-slate-800 bg-slate-900/60 p-6"
+                >
+                  <div className="text-3xl font-bold text-white">{stat.value}</div>
+                  <div className="mt-2 text-sm uppercase tracking-[0.2em] text-slate-400">
+                    {stat.label}
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+
+            <div className="rounded-3xl border border-slate-800 bg-slate-900/60 p-6">
+              <ul className="space-y-4 text-sm leading-7 text-slate-300 sm:text-base">
+                {privateWorkSignals.map((item) => (
+                  <li key={item} className="flex gap-3">
+                    <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-quaternary" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -91,7 +154,7 @@ const Portfolio = () => {
               I like building things that are useful, controlled, and hard to fake.
             </h2>
             <p className="mt-6 max-w-2xl text-base leading-8 text-slate-300 sm:text-lg">
-              The strongest thread across my work is not a single framework. It is
+              The strongest thread across my work is not one framework. It is
               practical product thinking: clear interfaces, reliable behavior,
               automation where it matters, and enough technical depth to own the
               whole stack when needed.

@@ -33,6 +33,10 @@ const Hero = () => {
             agents and UI systems to self-hosted infrastructure and internal
             tools that actually get used.
           </p>
+          <p className="mt-5 max-w-2xl text-sm leading-7 text-slate-400 sm:text-base">
+            Public repos show the direction. Private work carries a lot of the
+            current volume.
+          </p>
           <div className="mt-10 flex flex-wrap gap-4">
             <a
               href="#projects"
@@ -41,12 +45,10 @@ const Hero = () => {
               See selected work
             </a>
             <a
-              href="https://github.com/philspaces"
-              target="_blank"
-              rel="noreferrer"
+              href="#proof"
               className="rounded-full border border-slate-600 px-6 py-3 text-sm font-semibold text-slate-200 transition hover:border-slate-400 hover:text-white"
             >
-              GitHub profile
+              See proof
             </a>
           </div>
         </div>
