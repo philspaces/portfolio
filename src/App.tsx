@@ -1,20 +1,33 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { KeyboardEvent } from 'react';
-import { AnimatePresence, motion, useIsPresent } from 'motion/react';
-import { ArrowLeft, X } from '@phosphor-icons/react';
+import { AnimatePresence, LazyMotion, useIsPresent } from 'motion/react';
+import * as m from 'motion/react-m';
+import { ArrowLeftIcon, XIcon } from '@phosphor-icons/react';
 import { Backdrop } from './Backdrop';
 import { Demo } from './Demo';
 import { useIdleChrome } from './useIdleChrome';
 import { useMotionPreference } from './useMotionPreference';
 import { getProject, projects } from './projects';
 import type { Project } from './projects';
+import { getPageMetadata } from './metadata';
+import { handleAppNavigation, readBrowserRoute, routeHref, syncLegacyRoute } from './routing';
 
-function useRoute() {
-  const [route, setRoute] = useState(() => window.location.hash.slice(1) || '/');
+const loadMotionFeatures = () => import('./motionFeatures').then(module => module.default);
+
+function useRoute(initialRoute?: string) {
+  const [route, setRoute] = useState(() => initialRoute ?? readBrowserRoute());
   useEffect(() => {
-    const update = () => setRoute(window.location.hash.slice(1) || '/');
+    const update = () => {
+      syncLegacyRoute();
+      setRoute(readBrowserRoute());
+    };
+    update();
+    window.addEventListener('popstate', update);
     window.addEventListener('hashchange', update);
-    return () => window.removeEventListener('hashchange', update);
+    return () => {
+      window.removeEventListener('popstate', update);
+      window.removeEventListener('hashchange', update);
+    };
   }, []);
   return route;
 }
@@ -22,11 +35,11 @@ function useRoute() {
 function Scene({ project, interactive }: { project: Project; interactive: boolean }) {
   const present = useIsPresent();
   const reducedMotion = useMotionPreference();
-  return <motion.div className="stage-scene" aria-hidden={!present} inert={!present || !interactive}
+  return <m.div className="stage-scene" aria-hidden={!present} inert={!present || !interactive}
     initial={{ opacity: 0, y: reducedMotion ? 0 : 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
     transition={{ duration: reducedMotion ? 0 : 0.55, ease: [0.22, 1, 0.36, 1] }}>
     <Demo kind={project.kind} interactive={interactive && present} />
-  </motion.div>;
+  </m.div>;
 }
 
 function Stage({ project, caseStudy = false, immersed, setImmersed }: {
@@ -73,7 +86,7 @@ function Stage({ project, caseStudy = false, immersed, setImmersed }: {
     <section ref={stageRef} className={`showcase-stage${immersed ? ' is-immersed' : ''}${quiet ? ' chrome-quiet' : ''}`} data-chrome={quiet ? 'quiet' : 'visible'} aria-label={`${project.title} project showcase`}>
       {immersed && <div className="immerse-toolbar">
         <span className="immerse-label">{project.title} <span>/</span> Fictional concept</span>
-        <button ref={exitRef} className="exit-button" onClick={exit}>Exit demo <X size={17} /></button>
+        <button ref={exitRef} className="exit-button" onClick={exit}>Exit demo <XIcon size={17} /></button>
       </div>}
       <div className={`stage-visual stage-${project.kind}`}>
         <AnimatePresence initial={false}>
@@ -89,7 +102,7 @@ function Stage({ project, caseStudy = false, immersed, setImmersed }: {
         </div>
         <div className="stage-actions">
           <button ref={exploreRef} hidden={immersed} className="button-primary" onClick={explore} aria-expanded={immersed}>Explore demo</button>
-          {!caseStudy && <a className="button-text" href={`#/work/${project.id}`}>Read case study</a>}
+          {!caseStudy && <a className="button-text" href={routeHref(`/work/${project.id}`)}>Read case study</a>}
         </div>
       </div>
     </section>
@@ -149,12 +162,12 @@ function About() {
   return <section className="about-page">
     <span className="about-kicker">About</span>
     <h1 tabIndex={-1} aria-label="Long Phi Nguyen">Long Phi<br />Nguyen<span>.</span></h1>
-    <div className="about-content"><p className="about-lead">The story goes here.</p><p>This space is reserved for a personal introduction, background, and interests. Biography content has not been provided yet.</p><span className="placeholder-label">Biography placeholder</span><a className="button-text" href="#/">Back to work</a></div>
+    <div className="about-content"><p className="about-lead">The story goes here.</p><p>This space is reserved for a personal introduction, background, and interests. Biography content has not been provided yet.</p><span className="placeholder-label">Biography placeholder</span><a className="button-text" href={routeHref('/')}>Back to work</a></div>
   </section>;
 }
 
-export default function App() {
-  const route = useRoute();
+export default function App({ initialRoute }: { initialRoute?: string } = {}) {
+  const route = useRoute(initialRoute);
   const [selected, setSelected] = useState(projects[0].id);
   const [immersed, setImmersed] = useState(false);
   const resumeRef = useRef<HTMLDialogElement>(null);
@@ -167,15 +180,28 @@ export default function App() {
   const displayProject = caseProject || activeProject;
 
   useEffect(() => {
-    document.title = caseProject ? `${caseProject.title} concept · Long Phi Nguyen` : about ? 'About · Long Phi Nguyen' : 'Long Phi Nguyen · Living Showcase';
+    const metadata = getPageMetadata(route);
+    document.title = metadata.title;
+    for (const [selector, content] of [
+      ['meta[name="description"]', metadata.description],
+      ['meta[name="robots"]', metadata.robots],
+      ['meta[property="og:title"]', metadata.title],
+      ['meta[property="og:description"]', metadata.description],
+      ['meta[name="twitter:title"]', metadata.title],
+      ['meta[name="twitter:description"]', metadata.description],
+    ]) document.querySelector(selector)?.setAttribute('content', content);
     mainRef.current?.querySelector('h1')?.focus({ preventScroll: true });
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
   }, [route, caseProject, about]);
 
   useEffect(() => {
     const closeDemo = () => setImmersed(false);
+    window.addEventListener('popstate', closeDemo);
     window.addEventListener('hashchange', closeDemo);
-    return () => window.removeEventListener('hashchange', closeDemo);
+    return () => {
+      window.removeEventListener('popstate', closeDemo);
+      window.removeEventListener('hashchange', closeDemo);
+    };
   }, []);
 
   const select = (id: string) => {
@@ -183,17 +209,17 @@ export default function App() {
     setSelected(id);
   };
 
-  return <div className={`portfolio${immersed ? ' has-immersion' : ''}`} data-project={displayProject.id} data-view={about ? 'about' : 'work'}>
+  return <LazyMotion features={loadMotionFeatures} strict><div onClick={handleAppNavigation} className={`portfolio${immersed ? ' has-immersion' : ''}`} data-project={displayProject.id} data-view={about ? 'about' : 'work'}>
     <Backdrop project={displayProject} immersed={immersed} />
     <a href="#main-content" className="skip-link" onClick={event => {
       event.preventDefault();
       document.getElementById('main-content')?.focus();
     }}>Skip to content</a>
     <header className="site-header">
-      <a href="#/" className="wordmark" aria-label="Long Phi Nguyen, home">Long Phi Nguyen<span className="wordmark-mark" aria-hidden="true">L</span></a>
+      <a href={routeHref('/')} className="wordmark" aria-label="Long Phi Nguyen, home">Long Phi Nguyen<span className="wordmark-mark" aria-hidden="true">L</span></a>
       <nav aria-label="Main navigation">
-        <a href="#/" aria-current={browse || caseProject ? 'page' : undefined}>Work</a>
-        <a href="#/about" aria-current={about ? 'page' : undefined}>About</a>
+        <a href={routeHref('/')} aria-current={browse || caseProject ? 'page' : undefined}>Work</a>
+        <a href={routeHref('/about')} aria-current={about ? 'page' : undefined}>About</a>
         <button onClick={() => resumeRef.current?.showModal()}>Resume</button>
       </nav>
     </header>
@@ -207,18 +233,18 @@ export default function App() {
         <div className="collection-note"><span>03 concepts <span className="note-divider">/</span> All projects are placeholders</span><span>Browse. Explore. Look closer.</span></div>
         <ProjectDetails project={activeProject} />
       </> : caseProject ? <>
-        <div className="case-header"><a href="#/" className="back-link" onClick={() => setSelected(caseProject.id)}><ArrowLeft size={17} /> All projects</a><span>Fictional case study · Placeholder content</span></div>
+        <div className="case-header"><a href={routeHref('/')} className="back-link" onClick={() => setSelected(caseProject.id)}><ArrowLeftIcon size={17} /> All projects</a><span>Fictional case study · Placeholder content</span></div>
         <h1 tabIndex={-1} className="case-heading">{caseProject.title} <span>Concept study</span></h1>
         <Stage key={caseProject.id} project={caseProject} caseStudy immersed={immersed} setImmersed={setImmersed} />
         <ProjectDetails project={caseProject} />
-        <div className="case-next"><p>Keep exploring</p>{projects.filter(p => p.id !== caseProject.id).map(p => <a key={p.id} href={`#/work/${p.id}`}>{p.title}</a>)}</div>
-      </> : about ? <About /> : <section className="not-found"><h1 tabIndex={-1}>Nothing here. Yet.</h1><p>This project could not be found.</p><a href="#/" className="button-primary">All projects</a></section>}
+        <div className="case-next"><p>Keep exploring</p>{projects.filter(p => p.id !== caseProject.id).map(p => <a key={p.id} href={routeHref(`/work/${p.id}`)}>{p.title}</a>)}</div>
+      </> : about ? <About /> : <section className="not-found"><h1 tabIndex={-1}>Nothing here. Yet.</h1><p>This project could not be found.</p><a href={routeHref('/')} className="button-primary">All projects</a></section>}
     </main>
-    <footer className="site-footer"><span>Long Phi Nguyen</span><span>A portfolio in progress.</span><a href="#/about">About this portfolio</a></footer>
+    <footer className="site-footer"><span>Long Phi Nguyen</span><span>A portfolio in progress.</span><a href={routeHref('/about')}>About this portfolio</a></footer>
     <dialog ref={resumeRef} className="resume-dialog" aria-label="Resume">
-      <div className="dialog-heading"><span>Resume</span><button className="icon-button" aria-label="Close resume" onClick={() => resumeRef.current?.close()}><X size={22} /></button></div>
+      <div className="dialog-heading"><span>Resume</span><button className="icon-button" aria-label="Close resume" onClick={() => resumeRef.current?.close()}><XIcon size={22} /></button></div>
       <h2 id="resume-title">A little more<br />to come<span>.</span></h2><p>A resume has not been provided yet. This space will hold the real document when it is ready.</p><span className="placeholder-label">Resume unavailable</span>
       <button className="button-primary" onClick={() => resumeRef.current?.close()}>Back to portfolio</button>
     </dialog>
-  </div>;
+  </div></LazyMotion>;
 }

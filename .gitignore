@@ -1,5 +1,8 @@
 node_modules/
 dist/
+.astro/
+playwright-report/
+test-results/
 output/
 .playwright-cli/
 *.local

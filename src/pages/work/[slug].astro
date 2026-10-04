@@ -1,0 +1,21 @@
+---
+import type { GetStaticPaths } from 'astro';
+import App from '../../App';
+import PortfolioLayout from '../../layouts/PortfolioLayout.astro';
+import { projects } from '../../projects';
+
+export const getStaticPaths: GetStaticPaths = () => projects.map(project => ({
+  params: { slug: project.id },
+  props: { route: `/work/${project.id}` },
+}));
+
+interface Props {
+  route: string;
+}
+
+const { route } = Astro.props;
+---
+
+<PortfolioLayout route={route}>
+  <App initialRoute={route} client:load />
+</PortfolioLayout>

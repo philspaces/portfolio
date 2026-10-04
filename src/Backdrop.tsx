@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import type { SyntheticEvent } from 'react';
 import { projects } from './projects';
 import type { Project } from './projects';
@@ -5,12 +6,18 @@ import './backdrop.css';
 
 /** Ambient concept art is decorative; every layer stays mounted for interruptible crossfades. */
 export function Backdrop({ project, immersed = false }: { project: Project; immersed?: boolean }) {
+  const backdropRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    for (const image of backdropRef.current?.querySelectorAll<HTMLImageElement>('.backdrop-art') ?? []) {
+      if (image.complete && image.naturalWidth === 0) image.hidden = true;
+    }
+  }, []);
   const hideMissingImage = (event: SyntheticEvent<HTMLImageElement>) => {
     event.currentTarget.hidden = true;
   };
 
   return (
-    <div className={`portfolio-backdrop${immersed ? ' is-immersed' : ''}`} data-project={project.id} aria-hidden="true">
+    <div ref={backdropRef} className={`portfolio-backdrop${immersed ? ' is-immersed' : ''}`} data-project={project.id} aria-hidden="true">
       {projects.map(({ id, backdrop }) => (
         <div key={id} className={`backdrop-layer backdrop-${backdrop.theme}${id === project.id ? ' is-active' : ''}`}
           data-backdrop-project={id}>

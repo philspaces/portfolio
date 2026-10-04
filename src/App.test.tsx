@@ -58,7 +58,7 @@ function setMotionPreference(value: boolean) {
 
 beforeEach(() => {
   setMotionPreference(false);
-  window.history.replaceState(null, '', '/#/');
+  window.history.replaceState(null, '', '/');
   vi.stubGlobal('matchMedia', vi.fn((query: string) => ({
     get matches() { return reducedMotion && query.includes('prefers-reduced-motion'); },
     media: query,
@@ -93,10 +93,10 @@ const expectBackdrop = (id: string) => {
   expect(backdrop?.querySelector('.backdrop-layer.is-active')).toHaveAttribute('data-backdrop-project', id);
 };
 
-function arriveAt(hash: string) {
+function arriveAt(path: string) {
   act(() => {
-    window.history.replaceState(null, '', `/${hash}`);
-    window.dispatchEvent(new HashChangeEvent('hashchange'));
+    window.history.replaceState(null, '', path);
+    window.dispatchEvent(new PopStateEvent('popstate'));
   });
 }
 
@@ -106,7 +106,7 @@ describe('The Living Showcase', () => {
     render(<App />);
     await user.click(screen.getByRole('link', { name: /skip to content/i }));
     expect(screen.getByRole('main')).toHaveFocus();
-    expect(window.location.hash).toBe('#/');
+    expect(window.location.pathname).toBe('/');
     expect(tab('Forma')).toHaveAttribute('aria-selected', 'true');
   });
 
@@ -120,7 +120,7 @@ describe('The Living Showcase', () => {
     for (const name of ['Roam', 'Relay', 'Forma', 'Roam', 'Forma'] as const) {
       await user.click(tab(name));
       expect(tab(name)).toHaveAttribute('aria-selected', 'true');
-      expect(caseLink()).toHaveAttribute('href', `#/work/${name.toLowerCase()}`);
+      expect(caseLink()).toHaveAttribute('href', `/work/${name.toLowerCase()}/`);
       expectBackdrop(name.toLowerCase());
     }
 
@@ -131,7 +131,7 @@ describe('The Living Showcase', () => {
     });
     expect(tab('Relay')).toHaveAttribute('aria-selected', 'true');
     expect(screen.getAllByRole('tab').filter(element => element.getAttribute('aria-selected') === 'true')).toHaveLength(1);
-    expect(caseLink()).toHaveAttribute('href', '#/work/relay');
+    expect(caseLink()).toHaveAttribute('href', '/work/relay/');
     expectBackdrop('relay');
     expect(window.scrollTo).not.toHaveBeenCalled();
     expect(scrollIntoView).not.toHaveBeenCalled();
@@ -143,9 +143,9 @@ describe('The Living Showcase', () => {
     await user.hover(tab('Roam'));
     expect(tab('Forma')).toHaveAttribute('aria-selected', 'true');
     expect(tab('Roam')).toHaveAttribute('aria-selected', 'false');
-    expect(caseLink()).toHaveAttribute('href', '#/work/forma');
+    expect(caseLink()).toHaveAttribute('href', '/work/forma/');
     await user.unhover(tab('Roam'));
-    expect(caseLink()).toHaveAttribute('href', '#/work/forma');
+    expect(caseLink()).toHaveAttribute('href', '/work/forma/');
   });
 
   it('scopes arrow keys to the project strip and moves focus with selection', async () => {
@@ -212,17 +212,29 @@ describe('The Living Showcase', () => {
   });
 
   it('opens a direct case study and follows browser-originated route changes', async () => {
-    arriveAt('#/work/roam');
+    arriveAt('/work/roam/');
     render(<App />);
     expect(screen.getByRole('heading', { level: 1, name: /roam/i })).toBeVisible();
     expectBackdrop('roam');
-    expect(screen.getByRole('link', { name: /all projects/i })).toHaveAttribute('href', '#/');
-    arriveAt('#/work/relay');
+    expect(screen.getByRole('link', { name: /all projects/i })).toHaveAttribute('href', '/');
+    arriveAt('/work/relay/');
     expect(await screen.findByRole('heading', { level: 1, name: /relay/i })).toBeVisible();
     expectBackdrop('relay');
-    arriveAt('#/');
+    arriveAt('/');
     expect(await screen.findByRole('tab', { name: /forma/i })).toBeVisible();
     expectBackdrop('forma');
+  });
+
+  it('upgrades a legacy hash after the application is already mounted', async () => {
+    render(<App />);
+    act(() => {
+      window.history.replaceState(null, '', '/#/work/roam');
+      window.dispatchEvent(new HashChangeEvent('hashchange'));
+    });
+    expect(await screen.findByRole('heading', { level: 1, name: /roam/i })).toBeVisible();
+    expect(window.location.pathname).toBe('/work/roam/');
+    expect(window.location.hash).toBe('');
+    expectBackdrop('roam');
   });
 
   it('honors native Back and Forward after case navigation', async () => {
@@ -244,7 +256,7 @@ describe('The Living Showcase', () => {
 
   it('provides a way back from an unknown case-study route', async () => {
     const user = userEvent.setup();
-    arriveAt('#/work/missing-project');
+    arriveAt('/work/missing-project/');
     render(<App />);
     expect(screen.getByRole('heading', { level: 1, name: /nothing here/i })).toBeVisible();
     await user.click(screen.getByRole('link', { name: /all projects/i }));
@@ -257,7 +269,7 @@ describe('The Living Showcase', () => {
     await user.click(screen.getByRole('link', { name: /^about$/i }));
     expect(await screen.findByRole('heading', { level: 1, name: /long phi\s*nguyen/i })).toBeVisible();
     expect(screen.getByText(/biography content has not been provided/i)).toBeVisible();
-    expect(window.location.hash).toBe('#/about');
+    expect(window.location.pathname).toBe('/about/');
     await user.click(screen.getByRole('link', { name: /^work$/i }));
     expect(await screen.findByRole('tab', { name: /forma/i })).toBeVisible();
   });
@@ -307,6 +319,6 @@ describe('The Living Showcase', () => {
     await user.click(screen.getByRole('button', { name: /explore demo/i }));
     await user.keyboard('{Escape}');
     await waitFor(() => expect(screen.getByRole('button', { name: /explore demo/i })).toHaveFocus());
-    expect(caseLink()).toHaveAttribute('href', '#/work/relay');
+    expect(caseLink()).toHaveAttribute('href', '/work/relay/');
   });
 });
