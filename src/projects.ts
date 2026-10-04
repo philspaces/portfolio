@@ -1,5 +1,11 @@
 export type DemoKind = 'web' | 'mobile' | 'system';
 
+export interface ProjectBackdrop {
+  theme: 'architecture' | 'coast' | 'network';
+  /** Decorative generated concept art, relative to public/. Omit for the structural CSS backdrop. */
+  asset?: string;
+}
+
 export interface Project {
   /** Stable URL slug. Replace this together with the corresponding project content. */
   id: string;
@@ -9,6 +15,7 @@ export interface Project {
   oneLiner: string;
   tags: string[];
   kind: DemoKind;
+  backdrop: ProjectBackdrop;
   description: string;
   role: string;
   context: string;
@@ -33,6 +40,7 @@ export const projects: Project[] = [
     oneLiner: 'A considered workspace for collecting visual ideas and seeing them in context.',
     tags: ['Web interface', 'Product thinking', 'Placeholder'],
     kind: 'web',
+    backdrop: { theme: 'architecture', asset: 'concept-art.webp' },
     description:
       'Forma is a fictional placeholder: an interactive workspace concept made to demonstrate this portfolio’s presentation. It is not a shipped product or an example of Long’s professional work.',
     role: 'Placeholder: add your actual role, contributions, and collaborators.',
@@ -87,6 +95,7 @@ export const projects: Project[] = [
     oneLiner: 'A pocket-sized way to discover a place and shape an afternoon.',
     tags: ['Mobile interface', 'Discovery', 'Placeholder'],
     kind: 'mobile',
+    backdrop: { theme: 'coast', asset: 'roam-atmosphere.webp' },
     description:
       'Roam is a fictional placeholder: a mobile discovery concept with a working browser demo. Its places and plans are sample content, not client work or Long’s professional achievements.',
     role: 'Placeholder: add your actual role, contributions, and collaborators.',
@@ -141,6 +150,7 @@ export const projects: Project[] = [
     oneLiner: 'An observable path from incoming event to completed work.',
     tags: ['System design', 'Observability', 'Placeholder'],
     kind: 'system',
+    backdrop: { theme: 'network' },
     description:
       'Relay is a fictional placeholder: a visual system concept that simulates an event pipeline in the browser. It is not a running backend or evidence of Long’s production engineering work.',
     role: 'Placeholder: add your actual role, contributions, and collaborators.',

@@ -26,8 +26,10 @@ The production build is written to `dist/`. There is no backend, CMS, authentica
 ## Browse and explore
 
 - Select a project by clicking its card. Selection does not move the page.
+- Each project has its own full-page atmosphere. Artwork crossfades with the selection and stays in sync with case-study routes and browser history.
 - With a project tab focused, use arrow keys to change projects; Home and End select the first and last project.
 - **Explore demo** expands the stage inline and enables its local sample interactions. **Exit demo** or Escape returns to browsing and restores focus to the entry control.
+- In the immersive stage, secondary labels fade after 2.5 seconds of inactivity. Pointer movement, touch, or keyboard input reveals them. Exit stays available, and focused or active demo controls keep the labels visible. Reduced motion keeps all labels visible.
 - **Read case study** opens a dedicated case view. Browser Back and Forward follow normal navigation.
 - Scroll naturally into the architecture and project details. The architecture stays alongside the details on desktop and joins the normal column on mobile.
 - **Resume** opens an honest availability dialog; it does not link to an invented document.
@@ -40,7 +42,9 @@ Motion follows the system's reduced-motion preference. No global Space shortcut,
 
 `src/Demo.tsx` contains the three local demo surfaces. Its `kind` selects a web, mobile, or system presentation. Replace the corresponding demo with a real approved demonstration when available. Demo state lives in the browser and is not persisted.
 
-`public/concept-art.webp` is fictional concept artwork, not a screenshot of an existing project. Replace it with approved media and preserve meaningful alternative text and a useful visual fallback. Add an actual biography and resume only after the owner provides them; do not treat the placeholder case fields as achievements.
+Each project's typed `backdrop` field chooses a theme and an optional asset under `public/`. `src/Backdrop.tsx` keeps the decorative layers mounted so rapid selection can interrupt a crossfade without accumulating stale layers. Missing images fall back to CSS compositions. Case-study details fade into a darker reading surface.
+
+`public/concept-art.webp` and `public/roam-atmosphere.webp` are generated fictional concept artwork, not screenshots of existing projects. Replace them with approved media and preserve meaningful alternative text for content images and a useful visual fallback. Add an actual biography and resume only after the owner provides them; do not treat the placeholder case fields as achievements.
 
 ## Routes and static hosting
 
@@ -58,4 +62,4 @@ Unknown views provide a return to the collection. Hash routes do not require ser
 
 ## Verification
 
-Vitest covers project data and user interactions: repeated and rapid selection, hover stability, skip-link and keyboard focus, inline demo exits, fresh demo entry after a project change, direct case routes, native history navigation, unknown views, biography and resume placeholders, Escape scope with an overlay open, and controls under reduced motion. The interaction suite uses jsdom and emulates dialog and scroll platform APIs; actual layout, native modal focus behavior, media fallbacks, and CSS motion require browser verification.
+Vitest covers project data and user interactions: repeated and rapid selection, backdrop synchronization, hover stability, skip-link and keyboard focus, inline demo exits, fresh demo entry after a project change, direct case routes, native history navigation, unknown views, biography and resume placeholders, Escape scope with an overlay open, and controls under reduced motion. Idle-label tests cover pointer, keyboard, touch, protected demo focus, gesture release outside the stage, reduced motion, and timer cleanup. The interaction suite uses jsdom and emulates dialog and scroll platform APIs; actual layout, native modal focus behavior, media fallbacks, and CSS motion require browser verification.

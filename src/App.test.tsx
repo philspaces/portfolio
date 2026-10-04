@@ -60,7 +60,7 @@ beforeEach(() => {
   setMotionPreference(false);
   window.history.replaceState(null, '', '/#/');
   vi.stubGlobal('matchMedia', vi.fn((query: string) => ({
-    matches: reducedMotion && query.includes('prefers-reduced-motion'),
+    get matches() { return reducedMotion && query.includes('prefers-reduced-motion'); },
     media: query,
     onchange: null,
     addListener: (listener: (event: MediaQueryListEvent) => void) => {
@@ -85,6 +85,13 @@ afterEach(() => {
 
 const tab = (name: 'Forma' | 'Roam' | 'Relay') => screen.getByRole('tab', { name: new RegExp(name, 'i') });
 const caseLink = () => screen.getByRole('link', { name: /read case study/i });
+const expectBackdrop = (id: string) => {
+  const backdrop = document.querySelector('.portfolio-backdrop');
+  expect(backdrop).toHaveAttribute('data-project', id);
+  expect(backdrop).toHaveAttribute('aria-hidden', 'true');
+  expect(backdrop?.querySelectorAll('.backdrop-layer.is-active')).toHaveLength(1);
+  expect(backdrop?.querySelector('.backdrop-layer.is-active')).toHaveAttribute('data-backdrop-project', id);
+};
 
 function arriveAt(hash: string) {
   act(() => {
@@ -114,6 +121,7 @@ describe('The Living Showcase', () => {
       await user.click(tab(name));
       expect(tab(name)).toHaveAttribute('aria-selected', 'true');
       expect(caseLink()).toHaveAttribute('href', `#/work/${name.toLowerCase()}`);
+      expectBackdrop(name.toLowerCase());
     }
 
     act(() => {
@@ -124,6 +132,7 @@ describe('The Living Showcase', () => {
     expect(tab('Relay')).toHaveAttribute('aria-selected', 'true');
     expect(screen.getAllByRole('tab').filter(element => element.getAttribute('aria-selected') === 'true')).toHaveLength(1);
     expect(caseLink()).toHaveAttribute('href', '#/work/relay');
+    expectBackdrop('relay');
     expect(window.scrollTo).not.toHaveBeenCalled();
     expect(scrollIntoView).not.toHaveBeenCalled();
   });
@@ -206,11 +215,14 @@ describe('The Living Showcase', () => {
     arriveAt('#/work/roam');
     render(<App />);
     expect(screen.getByRole('heading', { level: 1, name: /roam/i })).toBeVisible();
+    expectBackdrop('roam');
     expect(screen.getByRole('link', { name: /all projects/i })).toHaveAttribute('href', '#/');
     arriveAt('#/work/relay');
     expect(await screen.findByRole('heading', { level: 1, name: /relay/i })).toBeVisible();
+    expectBackdrop('relay');
     arriveAt('#/');
     expect(await screen.findByRole('tab', { name: /forma/i })).toBeVisible();
+    expectBackdrop('forma');
   });
 
   it('honors native Back and Forward after case navigation', async () => {
@@ -224,8 +236,10 @@ describe('The Living Showcase', () => {
 
     act(() => window.history.back());
     expect(await screen.findByRole('heading', { level: 1, name: /relay/i })).toBeVisible();
+    expectBackdrop('relay');
     act(() => window.history.forward());
     expect(await screen.findByRole('tab', { name: /relay/i })).toBeVisible();
+    expectBackdrop('relay');
   });
 
   it('provides a way back from an unknown case-study route', async () => {
@@ -257,6 +271,30 @@ describe('The Living Showcase', () => {
     expect(screen.queryByRole('link', { name: /download resume/i })).not.toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: /close/i }));
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  });
+
+  it('responds immediately when reduced motion changes during immersion', () => {
+    vi.useFakeTimers();
+    try {
+      render(<App />);
+      fireEvent.click(screen.getByRole('button', { name: /explore demo/i }));
+      const stage = screen.getByRole('region', { name: /forma project showcase/i });
+      act(() => vi.advanceTimersByTime(2600));
+      expect(stage).toHaveAttribute('data-chrome', 'quiet');
+
+      act(() => setMotionPreference(true));
+      expect(stage).toHaveAttribute('data-chrome', 'visible');
+      act(() => vi.advanceTimersByTime(10000));
+      expect(stage).toHaveAttribute('data-chrome', 'visible');
+
+      act(() => setMotionPreference(false));
+      act(() => vi.advanceTimersByTime(2499));
+      expect(stage).toHaveAttribute('data-chrome', 'visible');
+      act(() => vi.advanceTimersByTime(1));
+      expect(stage).toHaveAttribute('data-chrome', 'quiet');
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it('keeps selection and demo controls usable with reduced motion', async () => {

@@ -1,0 +1,155 @@
+.portfolio-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background: #10151f;
+  contain: paint;
+}
+
+.backdrop-layer,
+.backdrop-fallback,
+.backdrop-art,
+.backdrop-network-art,
+.backdrop-tint,
+.backdrop-legibility,
+.backdrop-grain {
+  position: absolute;
+  inset: 0;
+}
+
+.backdrop-layer {
+  opacity: 0;
+  transition: opacity .55s cubic-bezier(.22, 1, .36, 1);
+}
+
+.backdrop-layer.is-active { opacity: 1; }
+.backdrop-art { width: 100%; height: 100%; object-fit: cover; }
+.backdrop-art[hidden] { display: none; }
+
+.backdrop-architecture .backdrop-art {
+  object-position: 48% 58%;
+  filter: brightness(.68) saturate(.72) contrast(1.05);
+  transform: scale(1.04);
+}
+
+.backdrop-architecture .backdrop-fallback {
+  background:
+    linear-gradient(118deg, transparent 0 46%, #46515d 46% 49%, transparent 49%),
+    linear-gradient(90deg, #17212c 0 10%, #28313c 10% 12%, #17212c 12% 30%, #3e4650 30% 32%, transparent 32%),
+    linear-gradient(142deg, #354049, #0b1d3e 52%, #243958);
+}
+
+.backdrop-architecture .backdrop-tint {
+  background:
+    linear-gradient(110deg, rgb(10 13 18 / .35), transparent 52%),
+    linear-gradient(0deg, rgb(17 43 95 / .48), transparent 62%);
+}
+
+.backdrop-coast .backdrop-art {
+  object-position: 64% 58%;
+  filter: brightness(.82) saturate(.85);
+}
+
+.backdrop-coast .backdrop-fallback {
+  background:
+    repeating-radial-gradient(ellipse at 115% 26%, transparent 0 20px, rgb(148 169 201 / .2) 21px 22px, transparent 23px 45px),
+    linear-gradient(116deg, #163f8a 0 45%, #304866 45% 53%, #182433 53% 67%, #52647a 67% 70%, #182433 70%);
+}
+
+.backdrop-coast .backdrop-tint {
+  background: linear-gradient(115deg, rgb(11 33 79 / .38), transparent 68%);
+}
+
+.backdrop-network-art { overflow: hidden; background: #111722; perspective: 850px; }
+.backdrop-network-grid {
+  position: absolute;
+  inset: -35% -20%;
+  background-image:
+    linear-gradient(rgb(105 132 178 / .19) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(105 132 178 / .19) 1px, transparent 1px);
+  background-size: 76px 76px;
+  transform: rotateX(48deg) rotateZ(-28deg) scale(1.25);
+  transform-origin: 58% 42%;
+  mask-image: linear-gradient(110deg, transparent, #000 22% 82%, transparent);
+}
+
+.backdrop-network-plane {
+  position: absolute;
+  width: 62vw;
+  height: 42vh;
+  border: 1px solid rgb(122 154 220 / .5);
+  background: linear-gradient(125deg, rgb(37 60 103 / .2), rgb(21 36 64 / .6));
+  transform: rotate(-28deg) skewX(17deg);
+}
+
+.plane-primary { left: 53%; top: 31%; }
+.plane-secondary { left: -23%; top: 70%; height: 32vh; border-color: rgb(92 119 176 / .26); }
+.plane-tertiary { left: 50%; top: -32%; width: 48vw; border-color: rgb(92 119 176 / .28); }
+
+.backdrop-network-trace {
+  position: absolute;
+  width: 52vw;
+  height: 34vh;
+  border-top: 2px solid #416aca;
+  border-right: 2px solid #416aca;
+  transform: rotate(-28deg) skewX(17deg);
+  opacity: .62;
+}
+
+.backdrop-network-trace::before,
+.backdrop-network-trace::after {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: #5c80d4;
+}
+
+.backdrop-network-trace::before { left: -4px; top: -5px; }
+.backdrop-network-trace::after { bottom: -4px; right: -5px; }
+.trace-one { left: 63%; top: 47%; }
+.trace-two { left: -32%; top: 63%; height: 23vh; border-color: #6883b9; opacity: .34; }
+.trace-three { left: 32%; top: -34%; height: 39vh; width: 31vw; opacity: .42; }
+.trace-four { left: 74%; top: 82%; height: 32vh; width: 19vw; }
+
+.backdrop-network .backdrop-tint { background: linear-gradient(90deg, rgb(8 12 19 / .45), transparent 60%); }
+
+.backdrop-legibility {
+  transition: opacity .55s cubic-bezier(.22, 1, .36, 1);
+  background: linear-gradient(180deg,
+    rgb(9 12 18 / .88) 0%,
+    rgb(9 12 18 / .6) 18%,
+    rgb(9 12 18 / .16) 42%,
+    rgb(9 12 18 / .22) 58%,
+    rgb(9 12 18 / .75) 82%,
+    rgb(9 12 18 / .94) 100%);
+}
+
+.portfolio-backdrop.is-immersed .backdrop-legibility { opacity: .86; }
+
+.backdrop-grain {
+  opacity: .05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='grain'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Cpath fill='%23fff' filter='url(%23grain)' d='M0 0h160v160H0z'/%3E%3C/svg%3E");
+}
+
+@media (max-width: 700px) {
+  .backdrop-architecture .backdrop-art { object-position: 39% 54%; }
+  .backdrop-coast .backdrop-art { object-position: 71% 58%; }
+  .backdrop-network-grid { background-size: 56px 56px; inset: -10% -65%; }
+  .backdrop-network-plane { width: 105vw; height: 32vh; }
+  .plane-primary { left: 47%; top: 38%; }
+  .plane-secondary { left: -59%; top: 64%; }
+  .backdrop-network-trace { width: 91vw; }
+  .trace-one { left: 70%; top: 39%; }
+  .trace-two { left: -75%; top: 76%; }
+  .backdrop-legibility {
+    background: linear-gradient(180deg, rgb(9 12 18 / .9), rgb(9 12 18 / .6) 22%, rgb(9 12 18 / .24) 45%, rgb(9 12 18 / .85) 85%, rgb(9 12 18 / .96));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .backdrop-layer,
+  .backdrop-legibility { transition: none; }
+}

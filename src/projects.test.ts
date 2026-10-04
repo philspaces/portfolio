@@ -28,6 +28,15 @@ describe('placeholder project content', () => {
     }
   });
 
+  it('gives each concept a distinct atmospheric theme with local optional artwork', () => {
+    expect(new Set(projects.map(({ backdrop }) => backdrop.theme))).toEqual(
+      new Set(['architecture', 'coast', 'network']),
+    );
+    for (const { backdrop } of projects) {
+      if (backdrop.asset) expect(backdrop.asset).toMatch(/^[a-z0-9-]+\.webp$/);
+    }
+  });
+
   it('labels every concept, role, constraint set, and evidence field as placeholder content', () => {
     for (const project of projects) {
       expect(project.description).toMatch(/fictional placeholder/i);

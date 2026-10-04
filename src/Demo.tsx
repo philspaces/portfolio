@@ -3,7 +3,6 @@ import type { ButtonHTMLAttributes } from 'react'
 import {
   ArrowClockwise,
   ArrowRight,
-  ArrowUpRight,
   BookmarkSimple,
   CaretDown,
   Check,
@@ -85,7 +84,7 @@ function Forma({ interactive }: { interactive: boolean }) {
           <div className="demo-sidebar-footer"><span className="demo-avatar">S</span><div>Sample workspace<small>Local demo only</small></div><CaretDown size={13} /></div>
         </div>
         <div className="demo-forma-main">
-          <div className="demo-forma-toolbar"><span>Collections <ArrowRight size={12} /> Spatial studies</span><span><MagnifyingGlass size={16} /><DotsThree size={20} /></span></div>
+          <div className="demo-forma-toolbar"><span>Collections <span aria-hidden="true">/</span> Spatial studies</span><span><MagnifyingGlass size={16} /><DotsThree size={20} /></span></div>
           <div className="demo-forma-heading"><div><p>YOUR REFERENCE LIBRARY</p><h3>Room for ideas.</h3></div><span className="demo-forma-count">{filtered.length.toString().padStart(2, '0')} <span>sample studies</span></span></div>
           <div className="demo-forma-filters" aria-label="Filter sample collection">
             <div>{['All', 'Spaces', 'Objects'].map((item) => <DemoControl interactive={interactive} key={item} type="button" disabled={!interactive} aria-pressed={filter === item} onClick={() => chooseFilter(item)} className={filter === item ? 'demo-chip demo-chip-active' : 'demo-chip'}>{item}</DemoControl>)}</div>
@@ -95,7 +94,7 @@ function Forma({ interactive }: { interactive: boolean }) {
             <ConceptImage key={current.id} position={current.position} />
             <div className="demo-forma-feature-detail"><div><span>GENERATED CONCEPT ART</span><h4>{current.title}</h4><p>{current.description}</p></div><DemoControl interactive={interactive} type="button" className={`demo-save ${saved ? 'demo-save-active' : ''}`} disabled={!interactive} onClick={() => setSaved((value) => !value)} aria-label={saved ? 'Remove sample study from saved' : 'Save sample study'} aria-pressed={saved}>{saved ? <Check size={18} /> : <BookmarkSimple size={18} />}</DemoControl></div>
           </div>
-          <div className="demo-forma-grid" aria-label="Sample studies">{filtered.map((item) => <DemoControl interactive={interactive} className={`demo-study ${selected === item.id ? 'demo-study-selected' : ''}`} type="button" key={item.id} disabled={!interactive} aria-pressed={selected === item.id} onClick={() => { setSelected(item.id); setSaved(false) }}><div><ConceptImage position={item.position} /><ArrowUpRight size={15} /></div><span>{item.title}</span><small>{item.category} / sample</small></DemoControl>)}</div>
+          <div className="demo-forma-grid" aria-label="Sample studies">{filtered.map((item) => <DemoControl interactive={interactive} className={`demo-study ${selected === item.id ? 'demo-study-selected' : ''}`} type="button" key={item.id} disabled={!interactive} aria-pressed={selected === item.id} onClick={() => { setSelected(item.id); setSaved(false) }}><div><ConceptImage position={item.position} /></div><span>{item.title}</span><small>{item.category} / sample</small></DemoControl>)}</div>
           <div className="demo-forma-note" aria-live={interactive ? 'polite' : undefined}>{interactive ? `Showing ${filter.toLowerCase()} sample studies. ${current.title} selected${saved ? ' and saved' : ''}.` : 'A fictional product concept. All content is sample material.'}</div>
         </div>
       </div>
@@ -123,7 +122,6 @@ function Roam({ interactive }: { interactive: boolean }) {
 
   return (
     <div className="demo-roam-composition demo-frame">
-      <span className="demo-roam-stamp">ROAM / FICTIONAL MOBILE CONCEPT</span>
       <div className="demo-phone demo-phone-map">
         <div className="demo-phone-status"><span>9:41</span><div /><span className="demo-phone-signal">••• ▰</span></div>
         <div className="demo-phone-brand"><span><Compass size={19} weight="fill" />roam</span><span className="demo-phone-avatar">S</span></div>
@@ -136,7 +134,7 @@ function Roam({ interactive }: { interactive: boolean }) {
           {current.names.map((name, i) => <DemoControl interactive={interactive} key={name} type="button" className={`demo-map-marker demo-map-marker-${i} ${activeStop === i ? 'demo-map-marker-active' : ''}`} disabled={!interactive} onClick={() => setActiveStop(i)} aria-label={`View sample stop ${stops[i]}`} aria-pressed={activeStop === i}><MapPin size={15} weight="fill" /><span>{name}</span></DemoControl>)}
           <span className="demo-map-label">SAMPLE MAP</span>
         </div>
-        <div className="demo-roam-current"><div><small>YOUR NEXT LITTLE DETOUR</small><strong>{stops[activeStop]}</strong></div><ArrowUpRight size={22} /></div>
+        <div className="demo-roam-current"><div><small>YOUR NEXT LITTLE DETOUR</small><strong>{stops[activeStop]}</strong></div></div>
         <div className="demo-phone-nav"><span><Compass size={19} weight="fill" />Explore</span><span><MapPin size={19} />Your route</span><span><BookmarkSimple size={19} />Saved</span></div>
       </div>
       <div className="demo-phone demo-phone-route">
@@ -144,11 +142,10 @@ function Roam({ interactive }: { interactive: boolean }) {
         <div className="demo-roam-route-top"><Compass size={20} /><span>YOUR DAY, YOUR WAY</span><DotsThree size={22} /></div>
         <div className="demo-route-destinations" aria-label="Choose itinerary destination"><DemoControl interactive={interactive} type="button" disabled={!interactive} aria-pressed={destination === "coast"} onClick={() => chooseDestination("coast")} className={destination === "coast" ? "demo-destination-active" : ""}>North coast</DemoControl><DemoControl interactive={interactive} type="button" disabled={!interactive} aria-pressed={destination === "quarter"} onClick={() => chooseDestination("quarter")} className={destination === "quarter" ? "demo-destination-active" : ""}>Old quarter</DemoControl></div><h3>{current.place}</h3><p className="demo-route-sub">A sample itinerary with room to wander.</p>
         <div className="demo-route-summary"><div><strong>{stops.length}</strong><span>sample stops</span></div><div><strong>{current.distance}<small> km</small></strong><span>illustrative route</span></div></div>
-        <div className="demo-route-list" aria-label="Sample itinerary">{stops.map((stop, i) => <DemoControl interactive={interactive} key={stop} type="button" disabled={!interactive} className={activeStop === i ? 'demo-route-stop demo-route-stop-active' : 'demo-route-stop'} aria-pressed={activeStop === i} onClick={() => setActiveStop(i)}><span className="demo-stop-number">{i + 1}</span><div><small>{['09:00', '10:30', '13:00', '16:00'][i]} / SAMPLE</small><strong>{stop}</strong><span>{['Start with a new perspective', 'Something slow, something local', 'See where the day takes you', 'One more moment outside'][i]}</span></div><ArrowUpRight size={15} /></DemoControl>)}</div>
+        <div className="demo-route-list" aria-label="Sample itinerary">{stops.map((stop, i) => <DemoControl interactive={interactive} key={stop} type="button" disabled={!interactive} className={activeStop === i ? 'demo-route-stop demo-route-stop-active' : 'demo-route-stop'} aria-pressed={activeStop === i} onClick={() => setActiveStop(i)}><span className="demo-stop-number">{i + 1}</span><div><small>{['09:00', '10:30', '13:00', '16:00'][i]} / SAMPLE</small><strong>{stop}</strong><span>{['Start with a new perspective', 'Something slow, something local', 'See where the day takes you', 'One more moment outside'][i]}</span></div></DemoControl>)}</div>
         <DemoControl interactive={interactive} type="button" className="demo-roam-add" disabled={!interactive} onClick={() => { setExtraStop((value) => !value); if (extraStop && activeStop === 3) setActiveStop(0) }}>{extraStop ? <Check size={16} /> : <Plus size={16} />}{extraStop ? 'Remove optional stop' : 'Add a little detour'}</DemoControl>
         <p className="demo-roam-disclaimer" aria-live={interactive ? 'polite' : undefined}>{interactive ? `${current.name}: ${stops.length} sample stops. ${stops[activeStop]} selected.` : 'Fictional places. Sample itinerary.'}</p>
       </div>
-      <span className="demo-roam-caption">Small plans. Open possibilities.</span>
     </div>
   )
 }
