@@ -110,7 +110,7 @@ describe('The Living Showcase', () => {
     expect(tab('JadeWords')).toHaveAttribute('aria-selected', 'true');
   });
 
-  it('features the real JadeWords project with a safe external website link and an explicit preview', async () => {
+  it('exposes JadeWords screens immediately with a safe website link and optional expansion', async () => {
     const user = userEvent.setup();
     render(<App />);
     expect(tab('JadeWords')).toHaveAttribute('aria-selected', 'true');
@@ -122,7 +122,9 @@ describe('The Living Showcase', () => {
     expect(visit).toHaveAttribute('rel', expect.stringContaining('noreferrer'));
     expect(screen.queryByRole('link', { name: /read case study/i })).not.toBeInTheDocument();
     expect(screen.queryByRole('link', { name: /download|get the app|app store|google play/i })).not.toBeInTheDocument();
-    const preview = screen.getByRole('button', { name: /explore preview/i });
+    expect(screen.getByRole('region', { name: 'JadeWords screen viewer' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Vocabulary' })).toBeEnabled();
+    const preview = screen.getByRole('button', { name: /expand showcase/i });
     await user.click(preview);
     expect(screen.getByRole('button', { name: /exit demo/i })).toHaveFocus();
     await user.keyboard('{Escape}');
@@ -284,12 +286,12 @@ describe('The Living Showcase', () => {
     render(<App />);
     await user.click(tab('Relay'));
     await user.click(caseLink());
-    expect(await screen.findByRole('heading', { level: 1, name: /relay/i })).toBeVisible();
+    expect(await screen.findByRole('heading', { level: 1, name: /relay.*concept study/i })).toBeVisible();
     await user.click(screen.getByRole('link', { name: /all projects/i }));
     expect(await screen.findByRole('tab', { name: /relay/i })).toBeVisible();
 
     act(() => window.history.back());
-    expect(await screen.findByRole('heading', { level: 1, name: /relay/i })).toBeVisible();
+    expect(await screen.findByRole('heading', { level: 1, name: /relay.*concept study/i })).toBeVisible();
     expectBackdrop('relay');
     act(() => window.history.forward());
     expect(await screen.findByRole('tab', { name: /relay/i })).toBeVisible();

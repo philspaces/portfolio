@@ -6,6 +6,8 @@ import { ArrowLeftIcon, ArrowUpRightIcon, XIcon } from '@phosphor-icons/react';
 import { Backdrop } from './Backdrop';
 import { Demo } from './Demo';
 import { JadeShowcase } from './JadeShowcase';
+import { VocabSongs } from './VocabSongs';
+import { ProjectFilm } from './ProjectFilm';
 import { useIdleChrome } from './useIdleChrome';
 import { useMotionPreference } from './useMotionPreference';
 import { getProject, projects } from './projects';
@@ -106,19 +108,18 @@ function Stage({ project, caseStudy = false, immersed, setImmersed }: {
       </div>}
       <div className={`stage-visual stage-${project.kind}`}>
         <AnimatePresence initial={false}>
-          <Scene key={project.id} project={project} interactive={immersed} />
+          <Scene key={project.id} project={project} interactive={immersed || project.kind === 'jade'} />
         </AnimatePresence>
       </div>
-      <div className="stage-info">
+      <div className={`stage-info${!immersed && !caseStudy ? ' is-summary' : ''}`}>
         <div className="stage-copy">
           <span className="project-category">{project.number} <span>/</span> {project.category}</span>
-          <h2>{project.status === 'real' && !caseStudy ? <a href={routeHref(`/work/${project.id}`)}>{project.title}</a> : project.title}<span className="title-period">.</span></h2>
-          <p>{project.oneLiner}</p>
+          {(immersed || caseStudy) && <><h2>{project.title}<span className="title-period">.</span></h2><p>{project.oneLiner}</p></>}
           {!immersed && <div className="project-tags">{project.tags.map(tag => <span key={tag}>{tag}</span>)}</div>}
         </div>
         <div className="stage-actions">
           {project.status === 'real' && <WebsiteLink project={project} className="button-primary" />}
-          <button ref={exploreRef} hidden={immersed} className={project.status === 'real' ? 'button-text preview-button' : 'button-primary'} onClick={explore} aria-expanded={immersed}>{project.status === 'real' ? 'Explore preview' : 'Explore demo'}</button>
+          <button ref={exploreRef} hidden={immersed} className={project.status === 'real' ? 'button-text preview-button' : 'button-primary'} onClick={explore} aria-expanded={immersed}>{project.status === 'real' ? 'Expand showcase' : 'Explore demo'}</button>
           {project.status === 'placeholder' && !caseStudy && <a className="button-text" href={routeHref(`/work/${project.id}`)}>Read case study</a>}
         </div>
       </div>
@@ -152,18 +153,18 @@ function ProjectSelector({ selected, select }: { selected: string; select: (id: 
   </div>;
 }
 
-function RealProjectDetails({ project }: { project: RealProject }) {
-  return <section className="details-section real-project-details" aria-labelledby="details-heading">
-    <div className="details-heading"><h2 id="details-heading">The build<span>.</span></h2><p>{project.description}</p></div>
+function RealProjectDetails({ project, immersed }: { project: RealProject; immersed: boolean }) {
+  return <><section className="jade-overview-film" aria-label="JadeWords screen overview"><ProjectFilm media={project.overviewMedia} immersed={immersed} unavailableMessage="App preview unavailable." /></section><section className="details-section real-project-details" aria-labelledby="details-heading">
+    <div className="details-heading"><h2 id="details-heading">The build<span>.</span></h2><p>{project.engineering.introduction}</p></div>
     <div className="real-details-grid">
-      <aside className="real-build-note"><span className="build-kicker">Mobile / learning system</span><h3>Practice in<br />different forms.</h3><ul className="stack-list" aria-label="Technology stack">{project.stack.map(item => <li key={item}>{item}</li>)}</ul><p>{project.architectureNote}</p><div className="real-product-link"><WebsiteLink project={project} className="button-text" /><span>{project.availability}</span></div></aside>
-      <div className="real-feature-list"><h3>Learning flows</h3><dl>{project.features.map((feature, index) => <div key={feature.title}><span className="feature-number" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span><dt>{feature.title}</dt><dd>{feature.detail}</dd></div>)}</dl></div>
+      <aside className="real-build-note"><span className="build-kicker">Mobile / runtime architecture</span><h3>{project.engineering.headline}</h3><ul className="stack-list" aria-label="Technology stack">{project.stack.map(item => <li key={item}>{item}</li>)}</ul><ol className="runtime-boundaries" aria-label="Runtime boundaries">{project.engineering.boundaries.map(boundary => <li key={boundary.title}><strong>{boundary.title}</strong><span>{boundary.detail}</span></li>)}</ol><p>{project.architectureNote}</p></aside>
+      <div className="engineering-details">{project.engineering.sections.map((section, index) => <article key={section.title}><span className="feature-number" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span><div><h3>{section.title}</h3><p>{section.detail}</p><span className="engineering-source">{section.source}</span></div></article>)}<section className="engineering-implications" aria-label="Engineering implications"><h3>Trade-offs</h3><p className="implications-note">Engineering implications inferred from the code.</p>{project.engineering.implications.map(item => <div key={item.title}><h4>{item.title}</h4><p>{item.detail}</p></div>)}</section></div>
     </div>
-  </section>;
+  </section><VocabSongs feature={project.songs} immersed={immersed} /></>;
 }
 
-function ProjectDetails({ project }: { project: Project }) {
-  if (project.status === 'real') return <RealProjectDetails project={project} />;
+function ProjectDetails({ project, immersed }: { project: Project; immersed: boolean }) {
+  if (project.status === 'real') return <RealProjectDetails project={project} immersed={immersed} />;
   return <section className="details-section" aria-labelledby="details-heading">
     <div className="details-heading"><h2 id="details-heading">Under the surface<span>.</span></h2><p>A closer look at the {project.title} concept.</p></div>
     <div className="details-grid">
@@ -172,7 +173,7 @@ function ProjectDetails({ project }: { project: Project }) {
         <div className="architecture-path">{project.architecture.map((item, index) => <div className="architecture-node" key={item.title}>
           <span className="node-number">0{index + 1}</span><span>{item.title}</span>
         </div>)}</div>
-        <div className="architecture-footnote">An illustrative model, ready for a real project.</div>
+        <div className="architecture-footnote">Conceptual structure for this interface.</div>
         <div className="concept-note"><span>Placeholder concept</span><p>{project.description}</p></div>
       </aside>
       <div className="project-details">
@@ -253,18 +254,18 @@ export default function App({ initialRoute }: { initialRoute?: string } = {}) {
     </header>
     <main ref={mainRef} id="main-content" tabIndex={-1}>
       {browse ? <>
-        <div className="intro"><h1 tabIndex={-1}>A living showcase<span>.</span></h1><p>{realProjects[0] ? `${realProjects[0].title}, a ${realProjects[0].category.toLowerCase()}.` : 'A portfolio in progress.'}<br className="desktop-break" /> {conceptCount} interface concepts, clearly marked.</p></div>
+        <div className="project-heading"><h1 tabIndex={-1}>{activeProject.status === 'real' ? <a href={routeHref(`/work/${activeProject.id}`)}>{activeProject.title}</a> : activeProject.title}<span>.</span></h1><p>{activeProject.oneLiner}</p></div>
         <div id="project-panel" role="tabpanel" aria-labelledby={`tab-${selected}`}>
           <Stage project={activeProject} immersed={immersed} setImmersed={setImmersed} />
         </div>
         <ProjectSelector selected={selected} select={select} />
         <div className="collection-note"><span>{String(realProjects.length).padStart(2, '0')} {realProjects.length === 1 ? 'project' : 'projects'} <span className="note-divider">/</span> {String(conceptCount).padStart(2, '0')} placeholder concepts</span><span>Browse. Explore. Look closer.</span></div>
-        <ProjectDetails project={activeProject} />
+        <ProjectDetails project={activeProject} immersed={immersed} />
       </> : caseProject ? <>
         <div className="case-header"><a href={routeHref('/')} className="back-link" onClick={() => setSelected(caseProject.id)}><ArrowLeftIcon size={17} /> All projects</a><span>{caseProject.status === 'real' ? caseProject.availability : 'Fictional case study · Placeholder content'}</span></div>
         <h1 tabIndex={-1} className="case-heading">{caseProject.title} <span>{caseProject.status === 'real' ? 'Project overview' : 'Concept study'}</span></h1>
         <Stage key={caseProject.id} project={caseProject} caseStudy immersed={immersed} setImmersed={setImmersed} />
-        <ProjectDetails project={caseProject} />
+        <ProjectDetails project={caseProject} immersed={immersed} />
         <div className="case-next"><p>Keep exploring</p>{projects.filter(p => p.id !== caseProject.id).map(p => <a key={p.id} href={routeHref(`/work/${p.id}`)}>{p.title}</a>)}</div>
       </> : about ? <About /> : <section className="not-found"><h1 tabIndex={-1}>Nothing here. Yet.</h1><p>This project could not be found.</p><a href={routeHref('/')} className="button-primary">All projects</a></section>}
     </main>

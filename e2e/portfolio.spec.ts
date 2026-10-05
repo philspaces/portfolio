@@ -34,6 +34,7 @@ async function select(page: Page, name: string) {
   const tab = page.getByRole('tab', { name: new RegExp(name) });
   await tab.click();
   await expect(tab).toHaveAttribute('aria-selected', 'true');
+  await expect(page.locator('.project-heading h1')).toHaveText(`${name}.`);
   await expectProject(page, name === 'JadeWords' ? 'jade-words' : name.toLowerCase());
 }
 
@@ -47,10 +48,12 @@ async function expectNoOverflow(page: Page) {
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
 }
 
-test('JadeWords is featured with an explicit screen preview and a native external website link', async ({ page, context }, testInfo) => {
+test('JadeWords immediately exposes screens with optional expansion and a native external website link', async ({ page, context }, testInfo) => {
   await arrive(page);
   await expectProject(page, 'jade-words');
   await expect(page.getByRole('tab', { selected: true })).toHaveText(/JadeWords/);
+  await expect(page.getByRole('heading', { level: 1, name: 'JadeWords.', exact: true })).toBeVisible();
+  await expect(page.getByText(/A living showcase|interface concepts, clearly marked/)).toHaveCount(0);
   const visit = page.getByRole('link', { name: /View Jade Words/ }).first();
   await expect(visit).toHaveAttribute('href', 'https://jadewords.com/');
   await expect(visit).toHaveAttribute('target', '_blank');
@@ -58,7 +61,7 @@ test('JadeWords is featured with an explicit screen preview and a native externa
   await expect(visit).toHaveAttribute('rel', /noreferrer/);
   await expect(page.getByRole('link', { name: /Download|get the app|App Store|Google Play/i })).toHaveCount(0);
   await expect(page.getByRole('link', { name: 'Read case study', exact: true })).toHaveCount(0);
-  expect(await page.locator('video').count()).toBe(0);
+  expect(await page.locator('.showcase-stage video').count()).toBe(0);
   await testInfo.attach('jadewords-browse', {
     body: await page.screenshot({ path: `output/jade-words/screenshots/${testInfo.project.name}-browse.png` }),
     contentType: 'image/png',
@@ -77,46 +80,98 @@ test('JadeWords is featured with an explicit screen preview and a native externa
   await expect(page).toHaveURL(/\/$/);
   await expectProject(page, 'jade-words');
 
-  await explore(page, 'Explore preview');
   const viewer = page.getByRole('region', { name: 'JadeWords screen viewer', exact: true });
+  await expect(viewer).toBeVisible();
+  await expect(page.getByRole('button', { name: /Explore preview|Open app preview/ })).toHaveCount(0);
   await expect(viewer.getByRole('button', { name: 'Vocabulary', exact: true })).toHaveAttribute('aria-pressed', 'true');
   await viewer.getByRole('button', { name: 'Grammar', exact: true }).click();
-  await expect(viewer.getByRole('button', { name: 'Grammar', exact: true })).toHaveAttribute('aria-pressed', 'true');
   await expect(viewer.getByRole('img', { name: 'JadeWords grammar app screen', exact: true })).toBeVisible();
   await viewer.getByRole('button', { name: 'Writing', exact: true }).click();
   await expect(viewer.getByRole('img', { name: 'JadeWords writing app screen', exact: true })).toBeVisible();
   await expect(viewer.locator('.jade-screen-layer.is-current')).toHaveCSS('opacity', '1');
+
+  const overview = page.getByRole('region', { name: 'JadeWords screen overview', exact: true });
+  const video = overview.locator('video');
+  await expect(video).toHaveAttribute('controls', '');
+  await expect(video).toHaveAttribute('preload', 'none');
+  await expect(video).not.toHaveAttribute('autoplay', '');
+  expect(await video.evaluate((element: HTMLVideoElement) => element.paused)).toBe(true);
+  await video.evaluate((element: HTMLVideoElement) => element.play());
+  await explore(page, 'Expand showcase');
+  expect(await video.evaluate((element: HTMLVideoElement) => element.paused)).toBe(true);
+  await expect(viewer.getByRole('button', { name: 'Writing', exact: true })).toHaveAttribute('aria-pressed', 'true');
   await page.locator('.showcase-stage').scrollIntoViewIfNeeded();
   await testInfo.attach('jadewords-writing-preview', {
     body: await page.screenshot({ path: `output/jade-words/screenshots/${testInfo.project.name}-writing-preview.png` }),
     contentType: 'image/png',
   });
-  await viewer.getByRole('button', { name: 'Open app preview', exact: true }).click();
-  const video = viewer.locator('video');
-  await expect(video).toHaveAttribute('controls', '');
-  await expect(video).not.toHaveAttribute('autoplay', '');
-  await expect(video).toBeFocused();
+  await video.evaluate((element: HTMLVideoElement) => element.play());
+  await video.focus();
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('button', { name: 'Expand showcase', exact: true })).toBeFocused();
   expect(await video.evaluate((element: HTMLVideoElement) => element.paused)).toBe(true);
+  await expect(viewer.getByRole('button', { name: 'Writing', exact: true })).toHaveAttribute('aria-pressed', 'true');
+  await explore(page, 'Expand showcase');
+  await page.getByRole('button', { name: 'Exit demo', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Expand showcase', exact: true })).toBeFocused();
+  await expectNoOverflow(page);
+});
+
+test('Vocab Songs supports explicit playback, navigation cleanup, reduced motion and media recovery', async ({ page }) => {
+  const songRequests: string[] = [];
+  page.on('request', request => { if (request.url().endsWith('/songs.mp4')) songRequests.push(request.url()); });
+  await arrive(page);
+  const songs = page.getByRole('region', { name: 'Vocab Songs', exact: true });
+  const video = songs.locator('video');
+  await expect(songs.getByRole('heading', { name: /Generation.*Then playback/s, exact: true })).toBeAttached();
+  await expect(songs.getByRole('heading', { level: 3 })).toHaveText(['Request boundary', 'Persisted stages', 'Playback & lyric timing']);
+  await expect(page.getByText(/Real app screens|Actual app|Verified project/i)).toHaveCount(0);
+  await expect(video).toHaveAttribute('controls', '');
+  await expect(video).toHaveAttribute('playsinline', '');
+  await expect(video).toHaveAttribute('preload', 'none');
+  await expect(video).not.toHaveAttribute('autoplay', '');
+  await expect(video).toHaveAccessibleDescription(/silent, 15-second feature illustration.*not recorded app interaction or a playable song/);
+  expect(await video.evaluate((element: HTMLVideoElement) => element.paused)).toBe(true);
+  expect(songRequests).toEqual([]);
+
   const firstVideo = await video.elementHandle();
   await video.evaluate((element: HTMLVideoElement) => element.play());
-  await viewer.getByRole('button', { name: 'Back to app screens', exact: true }).click();
-  await expect(viewer.getByRole('button', { name: 'Open app preview', exact: true })).toBeFocused();
+  expect(await video.evaluate((element: HTMLVideoElement) => element.paused)).toBe(false);
+  await select(page, 'Forma');
+  await expect(songs).toHaveCount(0);
   expect(await firstVideo!.evaluate((element: HTMLVideoElement) => element.paused)).toBe(true);
-  await viewer.getByRole('button', { name: 'Open app preview', exact: true }).click();
-  await expect(video).toBeFocused();
+  await select(page, 'JadeWords');
   expect(await video.evaluate((element: HTMLVideoElement) => element.paused)).toBe(true);
-  const playingVideo = await video.elementHandle();
+
+  await explore(page, 'Expand showcase');
+  await expect(songs).toBeAttached();
+  await video.evaluate((element: HTMLVideoElement) => element.play());
+  await video.focus();
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('button', { name: 'Expand showcase', exact: true })).toBeFocused();
+  expect(await video.evaluate((element: HTMLVideoElement) => element.paused)).toBe(true);
+
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await arrive(page, '/work/jade-words/');
+  await expect(songs).toBeAttached();
+  expect(await video.evaluate((element: HTMLVideoElement) => element.paused)).toBe(true);
   await video.evaluate((element: HTMLVideoElement) => element.play());
   expect(await video.evaluate((element: HTMLVideoElement) => element.paused)).toBe(false);
-  await page.keyboard.press('Escape');
-  await expect(page.getByRole('button', { name: 'Explore preview', exact: true })).toBeFocused();
-  await expect(page.locator('video')).toHaveCount(0);
-  expect(await playingVideo!.evaluate((element: HTMLVideoElement) => element.paused)).toBe(true);
-  await explore(page, 'Explore preview');
-  await expect(viewer.getByRole('button', { name: 'Vocabulary', exact: true })).toBeVisible();
-  await expect(page.locator('video')).toHaveCount(0);
-  await page.getByRole('button', { name: 'Exit demo', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'Explore preview', exact: true })).toBeFocused();
+  await video.evaluate((element: HTMLVideoElement) => element.pause());
+
+  await page.route('**/jade-words/media/songs.mp4', route => route.abort());
+  await arrive(page, '/work/jade-words/');
+  await video.focus();
+  await video.evaluate((element: HTMLVideoElement) => element.play().catch(() => undefined));
+  await expect(songs.getByRole('status')).toHaveText('Vocab Songs preview unavailable.');
+  const retry = songs.getByRole('button', { name: 'Retry preview', exact: true });
+  await expect(retry).toBeFocused();
+  await page.unroute('**/jade-words/media/songs.mp4');
+  await retry.click();
+  await expect(video).toBeFocused();
+  expect(await video.evaluate((element: HTMLVideoElement) => element.paused)).toBe(true);
+  await video.evaluate((element: HTMLVideoElement) => element.play());
+  expect(await video.evaluate((element: HTMLVideoElement) => element.paused)).toBe(false);
   await expectNoOverflow(page);
 });
 
@@ -128,25 +183,27 @@ test('missing JadeWords screens and preview keep the structural backdrop and exp
   await expectProject(page, 'jade-words');
   await expect(page.locator('.backdrop-jade .backdrop-art')).toHaveAttribute('hidden', '');
   await expect(page.locator('.backdrop-jade .backdrop-fallback')).toBeAttached();
-  await expect(page.locator('.stage-scene .jade-screen-layer.is-current').getByText('App screen unavailable', { exact: true })).toBeVisible();
-  await explore(page, 'Explore preview');
   const viewer = page.getByRole('region', { name: 'JadeWords screen viewer', exact: true });
+  await expect(viewer.locator('.jade-screen-layer.is-current').getByText('App screen unavailable', { exact: true })).toBeVisible();
   await viewer.getByRole('button', { name: 'Grammar', exact: true }).click();
   await expect(viewer.getByRole('button', { name: 'Grammar', exact: true })).toHaveAttribute('aria-pressed', 'true');
   await expect(viewer.locator('.jade-screen-layer.is-current').getByText('App screen unavailable', { exact: true })).toBeVisible();
-  await viewer.getByRole('button', { name: 'Open app preview', exact: true }).click();
-  await expect(viewer.getByRole('status')).toHaveText(/App preview unavailable/);
-  await expect(viewer.getByRole('button', { name: 'Back to app screens', exact: true })).toBeFocused();
-  await viewer.getByRole('button', { name: 'Back to app screens', exact: true }).click();
+  const overview = page.getByRole('region', { name: 'JadeWords screen overview', exact: true });
+  const video = overview.locator('video');
+  await video.focus();
+  await video.evaluate((element: HTMLVideoElement) => element.play().catch(() => undefined));
+  await expect(overview.getByRole('status')).toHaveText('App preview unavailable.');
+  await expect(overview.getByRole('button', { name: 'Retry preview', exact: true })).toBeFocused();
+  await explore(page, 'Expand showcase');
   await expect(viewer.getByRole('button', { name: 'Writing', exact: true })).toBeVisible();
   await page.keyboard.press('Escape');
-  await expect(page.getByRole('button', { name: 'Explore preview', exact: true })).toBeFocused();
+  await expect(page.getByRole('button', { name: 'Expand showcase', exact: true })).toBeFocused();
   await expectNoOverflow(page);
 });
 
 test('JadeWords overview has clean routing, Back/Forward, and real static HTML without release claims', async ({ page, browser, baseURL }) => {
   await arrive(page);
-  await page.getByRole('heading', { level: 2, name: /JadeWords/ }).getByRole('link', { name: 'JadeWords', exact: true }).click();
+  await page.getByRole('heading', { level: 1, name: /JadeWords/ }).getByRole('link', { name: 'JadeWords', exact: true }).click();
   await expect(page).toHaveURL(/\/work\/jade-words\/$/);
   await expect(page.getByRole('heading', { level: 1, name: /JadeWords/ })).toBeFocused();
   await expectProject(page, 'jade-words');
@@ -154,6 +211,9 @@ test('JadeWords overview has clean routing, Back/Forward, and real static HTML w
   await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /Chinese/i);
   await expect(page.locator('.case-header').getByText('Coming soon to iOS & Android', { exact: true })).toBeVisible();
   await expect(page.getByRole('heading', { name: /Role & contribution|Impact & evidence/ })).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: 'Resume a vocabulary session', exact: true })).toBeAttached();
+  await expect(page.getByRole('heading', { name: 'Validate strokes on the device', exact: true })).toBeAttached();
+  await expect(page.getByRole('region', { name: 'Vocab Songs', exact: true })).toContainText('New generation is untimed');
   await expect(page.getByText(/Fictional case study|Author input needed|No results are claimed/)).toHaveCount(0);
   await page.goBack();
   await expect(page.getByRole('tab', { selected: true })).toHaveText(/JadeWords/);
@@ -176,6 +236,8 @@ test('JadeWords overview has clean routing, Back/Forward, and real static HTML w
     await expect(staticPage.locator('.case-header').getByText('Coming soon to iOS & Android', { exact: true })).toBeVisible();
     await expect(staticPage.getByRole('link', { name: 'All projects', exact: true })).toHaveAttribute('href', '/');
     await expect(staticPage.getByRole('heading', { name: /Role & contribution|Impact & evidence/ })).toHaveCount(0);
+    await expect(staticPage.getByRole('heading', { name: 'A direct mobile runtime', exact: true })).toBeVisible();
+    await expect(staticPage.getByRole('region', { name: 'Vocab Songs', exact: true })).toBeAttached();
     await expect(staticPage.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex, follow');
   } finally {
     await staticContext.close();
@@ -439,7 +501,7 @@ test('Resume is an honest native dialog and its Escape does not exit the underly
 test('browse, real preview, fictional demos, and Resume have no serious or critical WCAG violations', async ({ page }, testInfo) => {
   await arrive(page);
   for (const view of ['Browse', 'JadeWords', 'Forma', 'Roam', 'Relay', 'Resume']) {
-    if (view === 'JadeWords') await explore(page, 'Explore preview');
+    if (view === 'JadeWords') await explore(page, 'Expand showcase');
     else if (view === 'Forma' || view === 'Roam' || view === 'Relay') {
       await page.keyboard.press('Escape');
       await select(page, view);

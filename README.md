@@ -2,7 +2,7 @@
 
 A static portfolio for **Long Phi Nguyen**. The previous application has been replaced while preserving the repository's Git history.
 
-**JadeWords** is the first real, featured project: a Chinese-learning app built with Expo, React Native, TypeScript, and Supabase. Its concise technical overview links to [the product website](https://jadewords.com/). The site currently describes app availability as coming soon; the portfolio does not claim an available store download, professional role, adoption, or measured impact.
+**JadeWords** is the featured project: a Chinese-learning app built with Expo, React Native, TypeScript, and Supabase. Its concise technical overview links to [the product website](https://jadewords.com/). The site currently describes app availability as coming soon; the portfolio does not claim an available store download, professional role, adoption, or measured impact.
 
 **Forma** (web workspace), **Roam** (mobile discovery), and **Relay** (system interface) are fictional placeholder concepts. Their demos and case studies are sample material, with no claims about clients, professional roles, shipped products, or verified outcomes. Biography and resume content remain unavailable until supplied.
 
@@ -62,12 +62,12 @@ Open `http://127.0.0.1:4173/portfolio/`. Assets and internal links include the c
 
 ## Browse and explore
 
-- Click a project card to select it. Its full-page backdrop crossfades with the selection and stays synchronized with case routes and history. With a project tab focused, arrow keys change projects; Home and End select the first and last.
+- The selected project title heads Work. Click a project card to change the heading and backdrop together; the selection stays synchronized with case routes and history. With a project tab focused, arrow keys change projects; Home and End select the first and last.
 - **Explore demo** expands the stage inline and enables its local sample controls. **Exit demo** or Escape returns to browsing and restores entry focus.
-- JadeWords starts selected. **View Jade Words** opens the verified product website in a new tab; **Explore preview** opens an inline viewer of actual vocabulary, grammar, and handwriting screenshots. The optional app-preview film starts paused with native controls. The screenshot viewer demonstrates the screens, not a functioning mobile app.
+- JadeWords starts selected with vocabulary, grammar and handwriting screen selection already available. **Expand showcase** enlarges the same composition and preserves selection. **View Jade Words** opens the product website in a new tab. The overview film is directly below the collection, with a paused poster and native controls. These media demonstrate screens rather than a functioning mobile app.
 - Secondary immersive labels fade after 2.5 seconds of inactivity. Pointer, touch, or keyboard input reveals them. Exit stays available; focused or active controls keep labels visible. Reduced motion keeps labels visible and disables transitions.
 - Scroll naturally into the architecture and details. The architecture is sticky on desktop and part of the normal column on mobile.
-- JadeWords has a concise build summary and verified learning-flow list.
+- JadeWords Details explains the direct Supabase runtime, resumable JSONB learning drafts, local geometric stroke validation and database completion RPC. Inferred engineering trade-offs are identified separately. A dedicated Vocab Songs section covers authenticated requests, persisted generation stages, private audio and timed/untimed lyric handling, with a silent illustration. Both native films start paused, support captions and pause when leaving the project or changing immersion.
 - **Resume** opens an availability dialog without an invented document link.
 
 Demo state is local and is not persisted. Missing artwork has a useful fallback. There is no global Space shortcut, scroll interception, iframe focus, or custom cursor.
@@ -78,9 +78,9 @@ Read the durable [design context and acceptance checklist](docs/DESIGN.md) befor
 
 [`src/projects.ts`](src/projects.ts) remains the typed content layer. `RealProject` and `PlaceholderProject` are distinct records, identified by `status`; real projects do not require invented placeholder role or evidence fields. Replace concept records with approved project material. A project's stable `id` determines its generated URL.
 
-[`src/JadeShowcase.tsx`](src/JadeShowcase.tsx) uses owned JadeWords media copied from `language-app/apps/web/assets/` into `public/jade-words/`. The vocabulary, grammar, and writing images are actual app captures. `features.mp4` is a silent overview composed from those captures; it is not a live app recording. The illustrative Songs film is not used in this portfolio. Product sources were checked against the feature audit, package files, current mobile services, and the public website on 2026-10-05. NestJS is an optional service in the product repository, not the primary mobile backend.
+[`src/JadeShowcase.tsx`](src/JadeShowcase.tsx) uses owned JadeWords media copied from `language-app/apps/web/assets/` into `public/jade-words/`. The vocabulary, grammar, and writing images are product captures. `features.mp4` is a silent overview composed from those captures; it is not a live app recording. [`src/VocabSongs.tsx`](src/VocabSongs.tsx) uses the existing `songs.mp4`, poster and English captions in a supporting feature section. This silent promo is an illustrative composition based on a saved internal sample, not recorded Songs UI or playable music. Product sources were checked against the feature audit, package files, current mobile services, and the public website on 2026-10-05. NestJS is an optional service in the product repository, not the primary mobile backend.
 
-JadeWords places these screens directly above a full-viewport ink landscape in muted jade tones. `ink-landscape.svg` is small decorative project artwork, not app UI. Its concise build section covers vocabulary, flashcards, grammar, character writing, native speaking recognition and Vocab Songs. Feature evidence and limitations are recorded in the design document.
+JadeWords places these screens directly above a full-viewport ink landscape in muted jade tones. `ink-landscape.svg` is small decorative project artwork, not app UI. Details is an engineering case study, with source-grounded runtime, persistence, validation and orchestration mechanisms. New song generation produces untimed lyrics; timed line navigation is conditional on valid timestamps. Exact source references and implementation limits are recorded in the design document.
 
 [`src/Demo.tsx`](src/Demo.tsx) contains the three local demo surfaces. Replace the corresponding presentation with an approved real demonstration. The typed `backdrop` field selects a theme and optional asset under `public/`; [`src/Backdrop.tsx`](src/Backdrop.tsx) retains decorative layers for interruptible crossfades and supplies CSS fallbacks.
 

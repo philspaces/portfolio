@@ -19,13 +19,37 @@ interface ProjectBase {
   description: string;
 }
 
+export interface ProjectMedia {
+  video: string;
+  poster: string;
+  captions: string;
+  label: string;
+  description: string;
+}
+
+export interface SongsFeature {
+  title: string;
+  headline: string;
+  introduction: string;
+  steps: { title: string; detail: string }[];
+  media: ProjectMedia;
+}
+
 export interface RealProject extends ProjectBase {
   status: 'real';
   kind: 'jade';
   website: { url: string; label: string };
   stack: string[];
   architectureNote: string;
-  features: { title: string; detail: string }[];
+  overviewMedia: ProjectMedia;
+  engineering: {
+    introduction: string;
+    headline: string;
+    boundaries: { title: string; detail: string }[];
+    sections: { title: string; detail: string; source: string }[];
+    implications: { title: string; detail: string }[];
+  };
+  songs: SongsFeature;
   availability: string;
 }
 
@@ -58,15 +82,50 @@ export const projects: Project[] = [
     description: 'A Mandarin learning app combining vocabulary, recall, grammar, speaking and character writing. Vocab Songs brings selected words into music, with pinyin and translations.',
     website: { url: 'https://jadewords.com/', label: 'View Jade Words' },
     stack: ['Expo', 'React Native', 'TypeScript', 'Supabase'],
-    architectureNote: 'A typed mobile client uses Supabase Auth and PostgreSQL for content and progress. Song generation runs in Edge Functions, outside the mobile UI.',
-    features: [
-      { title: 'Vocabulary', detail: 'HSK levels and topic sets, with pinyin, meanings, audio and examples.' },
-      { title: 'Flashcards', detail: 'Reveal a card, mark remembered or missed, then retry missed words.' },
-      { title: 'Grammar', detail: 'Explanations and exercises, example audio, and in-place word lookup with audio.' },
-      { title: 'Character writing', detail: 'Watch stroke order, trace with guidance, then write from memory.' },
-      { title: 'Speaking', detail: 'Hear a Mandarin phrase, speak it, and inspect the recognized text.' },
-      { title: 'Vocab Songs', detail: 'Choose words and a sound preset for style and mood. Follow pinyin, translations and line replay.' },
-    ],
+    architectureNote: 'The Expo client calls Supabase directly. Auth, RLS and database RPCs form the persistence boundary; Edge Functions own provider calls. The optional NestJS workspace is outside the mobile runtime path.',
+    overviewMedia: {
+      video: 'jade-words/media/features.mp4',
+      poster: 'jade-words/media/features-poster.webp',
+      captions: 'jade-words/media/features-en.vtt',
+      label: 'JadeWords screen overview',
+      description: 'A silent overview composed from vocabulary, grammar and guided-writing captures. It shows app screens rather than live, interactive app controls.',
+    },
+    engineering: {
+      introduction: 'Resumable learning state, local stroke validation and server-side generation across a typed mobile client and Supabase.',
+      headline: 'Client interaction.\nServer boundaries.',
+      boundaries: [
+        { title: 'Expo client', detail: 'Navigation, gestures, session drafts, audio playback' },
+        { title: 'Supabase', detail: 'Auth · PostgreSQL + RLS · completion RPCs' },
+        { title: 'Edge Functions', detail: 'Generation orchestration · providers · private audio' },
+      ],
+      sections: [
+        { title: 'A direct mobile runtime', detail: 'A shared Supabase client persists Auth sessions in AsyncStorage and refreshes tokens. Typed services read content, write progress and invoke RPCs or Edge Functions directly. NestJS is an optional workspace, not an extra API hop in this app.', source: 'lib/supabase.ts · hooks/useAuth.ts' },
+        { title: 'Resume a vocabulary session', detail: 'Load the active draft, fetch vocabulary by its stored IDs, then restore order, index and answer sets. Changes persist as JSONB. A partial unique index limits active drafts per user, module, content and mode; owner policies scope reads and writes.', source: 'LearningSessionScreen.tsx · learningSessionAPI.ts' },
+        { title: 'Validate strokes on the device', detail: 'Stroke paths and medians come from Supabase through a per-character Promise cache. Gestures normalize to a 1024-coordinate SVG space. Each stroke is resampled to 20 points and checked against endpoints, mean distance and length; accepted strokes advance, rejected strokes trigger hints and haptics.', source: 'WritingBoard.tsx · writingAPI.ts' },
+        { title: 'Commit completion in PostgreSQL', detail: 'Writing completion invokes record_writing_completion. The RPC derives identity from auth.uid(), validates practice mode, locks existing progress, updates attempts and first-completion awards, then returns practice progress and progression together.', source: 'writingProgressAPI.ts · record_writing_completion' },
+      ],
+      implications: [
+        { title: 'A smaller runtime surface', detail: 'Direct Supabase removes an additional always-running API from the mobile path; access rules and domain mutations therefore sit in RLS, RPCs and Edge Functions.' },
+        { title: 'Immediate, bounded feedback', detail: 'Local geometry avoids a request for every stroke. Its deterministic tolerances match a reference stroke; they do not assess handwriting quality in general.' },
+      ],
+    },
+    songs: {
+      title: 'Vocab Songs',
+      headline: 'Generation.\nThen playback.',
+      introduction: 'Words and a sound preset enter a staged generation flow. Persisted track state connects authenticated requests, stored audio and the mobile player.',
+      steps: [
+        { title: 'Request boundary', detail: 'A typed Expo request sends selected words and preset style/mood to authenticated Edge Functions. A bounded Gemini planner can fall back to the base prompt; the Lyria audio call stays server-side.' },
+        { title: 'Persisted stages', detail: 'Focus-scoped client polling advances queued → generating_audio → audio_ready → lyric preparation → ready. Ownership and status predicates guard transitions. A failed lyric step retries against saved audio instead of regenerating it.' },
+        { title: 'Playback & lyric timing', detail: 'Private Storage supplies signed audio URLs to expo-audio. The player handles plain lyrics and timestamped LRC separately. New generation is untimed; line seeking is enabled only for tracks with valid timestamps.' },
+      ],
+      media: {
+        video: 'jade-words/media/songs.mp4',
+        poster: 'jade-words/media/songs-poster.webp',
+        captions: 'jade-words/media/songs-en.vtt',
+        label: 'Vocab Songs feature illustration',
+        description: 'A silent, 15-second feature illustration of selecting Chinese words, choosing a sound preset, and following lyrics with pinyin and translation. Illustrated graphics explain line replay; this is not recorded app interaction or a playable song.',
+      },
+    },
     availability: 'Coming soon to iOS & Android',
   },
   {
