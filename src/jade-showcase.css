@@ -20,6 +20,12 @@
 .jade-editorial-copy h3 { margin-top: 17px; font-family: Georgia, 'Times New Roman', serif; font-size: clamp(30px, 4.4vw, 61px); font-weight: 400; line-height: 1.03; letter-spacing: -2.1px; text-shadow: 0 3px 28px rgb(5 19 11 / .24); }
 .jade-editorial-copy p { margin-top: 22px; font-size: 12px; line-height: 1.7; color: var(--jade-muted); }
 .jade-primary-screen { height: 100%; min-height: 0; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 9px; position: relative; z-index: 2; }
+.jade-board--songs { grid-template-columns: 1fr 1.6fr; column-gap: 5%; }
+.jade-primary-screen--film { min-width: 0; }
+.jade-songs-preview { width: 100%; animation: jade-preview-enter .55s cubic-bezier(.22, 1, .36, 1); }
+.jade-songs-preview .project-film { margin: 0; width: 100%; }
+.jade-songs-preview .project-film-fallback { min-height: 160px; }
+@keyframes jade-preview-enter { from { opacity: 0; } to { opacity: 1; } }
 .jade-device { position: relative; height: calc(100% - 20px); max-width: 100%; aspect-ratio: 600 / 1304; border: 5px solid #17251c; border-radius: 22px; background: var(--jade-paper); box-shadow: 0 0 0 1px rgb(202 216 188 / .45), 12px 28px 40px rgb(4 16 9 / .4); }
 .jade-screen-layer { position: absolute; inset: 0; opacity: 0; transition: opacity .55s cubic-bezier(.22, 1, .36, 1); pointer-events: none; }
 .jade-screen-layer.is-current { opacity: 1; }
@@ -77,7 +83,7 @@
   .is-immersed .jade-brand img { width: 22px; height: 22px; }
   .jade-viewer-controls { left: 0; right: 0; bottom: 0; padding-top: 9px; flex-direction: column; gap: 3px; }
   .jade-screen-buttons { width: 100%; justify-content: center; }
-  .jade-screen-buttons button { min-height: 44px; padding: 8px 12px; font-size: 10px; }
+  .jade-screen-buttons button { min-height: 44px; padding: 8px 10px; font-size: 10px; }
   .jade-mini { padding-inline: 7%; }
   .jade-mini-wordmark { font-size: 7px; }
 }
@@ -88,4 +94,5 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .jade-screen-layer { transition: none; }
+  .jade-songs-preview { animation: none; }
 }

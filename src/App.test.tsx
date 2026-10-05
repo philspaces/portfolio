@@ -124,11 +124,20 @@ describe('The Living Showcase', () => {
     expect(screen.queryByRole('link', { name: /download|get the app|app store|google play/i })).not.toBeInTheDocument();
     expect(screen.getByRole('region', { name: 'JadeWords screen viewer' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Vocabulary' })).toBeEnabled();
+    const songs = screen.getByRole('button', { name: 'Songs' });
+    await user.click(songs);
+    expect(songs).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByRole('region', { name: 'JadeWords screen viewer' }).querySelector('video')).toHaveAttribute('controls');
+    await user.keyboard('{ArrowLeft}');
+    expect(screen.getByRole('button', { name: 'Writing' })).toHaveFocus();
+    await user.keyboard('{End}');
+    expect(songs).toHaveFocus();
     const preview = screen.getByRole('button', { name: /expand showcase/i });
     await user.click(preview);
     expect(screen.getByRole('button', { name: /exit demo/i })).toHaveFocus();
     await user.keyboard('{Escape}');
     await waitFor(() => expect(preview).toHaveFocus());
+    expect(songs).toHaveAttribute('aria-pressed', 'true');
     expect(tab('JadeWords')).toHaveAttribute('aria-selected', 'true');
   });
 

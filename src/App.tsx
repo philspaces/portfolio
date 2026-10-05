@@ -37,9 +37,9 @@ function useRoute(initialRoute?: string) {
   return route;
 }
 
-function ProjectVisual({ project, interactive = false, compact = false }: { project: Project; interactive?: boolean; compact?: boolean }) {
+function ProjectVisual({ project, interactive = false, compact = false, immersed = false }: { project: Project; interactive?: boolean; compact?: boolean; immersed?: boolean }) {
   return project.kind === 'jade'
-    ? <JadeShowcase interactive={interactive} compact={compact} />
+    ? <JadeShowcase project={project} interactive={interactive} compact={compact} immersed={immersed} />
     : <Demo kind={project.kind} interactive={interactive} compact={compact} />;
 }
 
@@ -50,13 +50,13 @@ function WebsiteLink({ project, className }: { project: RealProject; className: 
   </a>;
 }
 
-function Scene({ project, interactive }: { project: Project; interactive: boolean }) {
+function Scene({ project, interactive, immersed }: { project: Project; interactive: boolean; immersed: boolean }) {
   const present = useIsPresent();
   const reducedMotion = useMotionPreference();
   return <m.div className="stage-scene" aria-hidden={!present} inert={!present || !interactive}
     initial={{ opacity: 0, y: reducedMotion ? 0 : 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
     transition={{ duration: reducedMotion ? 0 : 0.55, ease: [0.22, 1, 0.36, 1] }}>
-    <ProjectVisual project={project} interactive={interactive && present} />
+    <ProjectVisual project={project} interactive={interactive && present} immersed={immersed} />
   </m.div>;
 }
 
@@ -103,12 +103,12 @@ function Stage({ project, caseStudy = false, immersed, setImmersed }: {
   return (
     <section ref={stageRef} className={`showcase-stage${immersed ? ' is-immersed' : ''}${quiet ? ' chrome-quiet' : ''}`} data-chrome={quiet ? 'quiet' : 'visible'} aria-label={`${project.title} project showcase`}>
       {immersed && <div className="immerse-toolbar">
-        <span className="immerse-label">{project.title} <span>/</span> {project.status === 'real' ? 'App screen preview' : 'Fictional concept'}</span>
+        <span className="immerse-label">{project.title} <span>/</span> {project.status === 'real' ? 'Project preview' : 'Fictional concept'}</span>
         <button ref={exitRef} className="exit-button" onClick={exit}>Exit demo <XIcon size={17} /></button>
       </div>}
       <div className={`stage-visual stage-${project.kind}`}>
         <AnimatePresence initial={false}>
-          <Scene key={project.id} project={project} interactive={immersed || project.kind === 'jade'} />
+          <Scene key={project.id} project={project} interactive={immersed || project.kind === 'jade'} immersed={immersed} />
         </AnimatePresence>
       </div>
       <div className={`stage-info${!immersed && !caseStudy ? ' is-summary' : ''}`}>

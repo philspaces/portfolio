@@ -117,6 +117,79 @@ test('JadeWords immediately exposes screens with optional expansion and a native
   await expectNoOverflow(page);
 });
 
+test('Songs preview shares the screen controls, survives expansion and cleans up explicit playback', async ({ page }, testInfo) => {
+  await arrive(page);
+  const viewer = page.getByRole('region', { name: 'JadeWords screen viewer', exact: true });
+  const controls = viewer.getByRole('group', { name: 'Choose a preview', exact: true });
+  await expect(controls.getByRole('button')).toHaveText(['Vocabulary', 'Grammar', 'Writing', 'Songs']);
+  const songsButton = controls.getByRole('button', { name: 'Songs', exact: true });
+  await songsButton.click();
+  await expect(songsButton).toHaveAttribute('aria-pressed', 'true');
+  const video = viewer.locator('video');
+  await expect(video).toHaveAttribute('controls', '');
+  await expect(video).toHaveAttribute('preload', 'none');
+  await expect(video).not.toHaveAttribute('autoplay', '');
+  await expect(video).toHaveAccessibleDescription(/feature illustration.*not recorded app interaction or a playable song/);
+  expect(await video.evaluate((element: HTMLVideoElement) => element.paused)).toBe(true);
+  await page.locator('.showcase-stage').scrollIntoViewIfNeeded();
+  await page.screenshot({ path: `output/jade-words/screenshots/${testInfo.project.name}-songs-tab.png` });
+  const firstVideo = await video.elementHandle();
+  await video.evaluate((element: HTMLVideoElement) => element.play());
+  await controls.getByRole('button', { name: 'Writing', exact: true }).click();
+  expect(await firstVideo!.evaluate((element: HTMLVideoElement) => element.paused)).toBe(true);
+  await expect(video).toHaveCount(0);
+
+  // Preview arrows stay scoped to the four buttons and leave the project selected.
+  await page.keyboard.press('ArrowRight');
+  await expect(songsButton).toBeFocused();
+  await expect(songsButton).toHaveAttribute('aria-pressed', 'true');
+  await expectProject(page, 'jade-words');
+  await video.evaluate((element: HTMLVideoElement) => element.play());
+  await explore(page, 'Expand showcase');
+  await expect(songsButton).toHaveAttribute('aria-pressed', 'true');
+  expect(await video.evaluate((element: HTMLVideoElement) => element.paused)).toBe(true);
+  await page.screenshot({ path: `output/jade-words/screenshots/${testInfo.project.name}-songs-expanded.png` });
+  await video.evaluate((element: HTMLVideoElement) => element.play());
+  await page.getByRole('button', { name: 'Exit demo', exact: true }).click();
+  expect(await video.evaluate((element: HTMLVideoElement) => element.paused)).toBe(true);
+  await expect(page.getByRole('button', { name: 'Expand showcase', exact: true })).toBeFocused();
+  await expect(songsButton).toHaveAttribute('aria-pressed', 'true');
+
+  await songsButton.focus();
+  await page.keyboard.press('Home');
+  await expect(controls.getByRole('button', { name: 'Vocabulary', exact: true })).toBeFocused();
+  await page.keyboard.press('ArrowLeft');
+  await expect(songsButton).toBeFocused();
+  for (const name of ['Grammar', 'Songs', 'Vocabulary', 'Songs', 'Writing', 'Songs']) {
+    await controls.getByRole('button', { name, exact: true }).click();
+  }
+  expect(await video.evaluate((element: HTMLVideoElement) => element.paused)).toBe(true);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect(viewer.locator('.jade-songs-preview')).toHaveCSS('animation-name', 'none');
+  await explore(page, 'Expand showcase');
+  await songsButton.focus();
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('button', { name: 'Expand showcase', exact: true })).toBeFocused();
+  await expectNoOverflow(page);
+
+  await page.route('**/jade-words/media/songs.mp4', route => route.abort());
+  await arrive(page);
+  await songsButton.click();
+  await video.focus();
+  await video.evaluate((element: HTMLVideoElement) => element.play().catch(() => undefined));
+  await expect(viewer.getByRole('status')).toHaveText('Vocab Songs preview unavailable.');
+  const retry = viewer.getByRole('button', { name: 'Retry preview', exact: true });
+  await expect(retry).toBeFocused();
+  await page.unroute('**/jade-words/media/songs.mp4');
+  await retry.click();
+  await expect(video).toBeFocused();
+  expect(await video.evaluate((element: HTMLVideoElement) => element.paused)).toBe(true);
+  await select(page, 'Forma');
+  await expect(viewer).toHaveCount(0);
+  await select(page, 'JadeWords');
+  await expect(controls.getByRole('button', { name: 'Vocabulary', exact: true })).toHaveAttribute('aria-pressed', 'true');
+});
+
 test('Vocab Songs supports explicit playback, navigation cleanup, reduced motion and media recovery', async ({ page }) => {
   const songRequests: string[] = [];
   page.on('request', request => { if (request.url().endsWith('/songs.mp4')) songRequests.push(request.url()); });

@@ -27,6 +27,14 @@ export interface ProjectMedia {
   description: string;
 }
 
+export interface AppScreenPreview {
+  id: string;
+  label: string;
+  file: string;
+  accent: 'jade' | 'blue' | 'cinnabar';
+  number: string;
+}
+
 export interface SongsFeature {
   title: string;
   headline: string;
@@ -41,6 +49,7 @@ export interface RealProject extends ProjectBase {
   website: { url: string; label: string };
   stack: string[];
   architectureNote: string;
+  screenPreviews: AppScreenPreview[];
   overviewMedia: ProjectMedia;
   engineering: {
     introduction: string;
@@ -83,6 +92,11 @@ export const projects: Project[] = [
     website: { url: 'https://jadewords.com/', label: 'View Jade Words' },
     stack: ['Expo', 'React Native', 'TypeScript', 'Supabase'],
     architectureNote: 'The Expo client calls Supabase directly. Auth, RLS and database RPCs form the persistence boundary; Edge Functions own provider calls. The optional NestJS workspace is outside the mobile runtime path.',
+    screenPreviews: [
+      { id: 'vocabulary', label: 'Vocabulary', file: 'word.webp', accent: 'jade', number: '01' },
+      { id: 'grammar', label: 'Grammar', file: 'grammar.webp', accent: 'blue', number: '02' },
+      { id: 'writing', label: 'Writing', file: 'writing.webp', accent: 'cinnabar', number: '03' },
+    ],
     overviewMedia: {
       video: 'jade-words/media/features.mp4',
       poster: 'jade-words/media/features-poster.webp',
