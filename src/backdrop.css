@@ -61,9 +61,13 @@
   background: linear-gradient(115deg, rgb(11 33 79 / .38), transparent 68%);
 }
 
-.backdrop-jade .backdrop-fallback { background: #1d2722; }
-.backdrop-jade .backdrop-tint { background: none; }
-.portfolio-backdrop[data-project='jade-words'] .backdrop-legibility { background: none; }
+.backdrop-jade .backdrop-art { object-position: 50% 50%; }
+.backdrop-jade .backdrop-fallback {
+  background:
+    radial-gradient(ellipse at 86% 20%, #53664e, transparent 53%),
+    linear-gradient(135deg, #12291f, #31553b 55%, #11241b);
+}
+.backdrop-jade .backdrop-tint { background: linear-gradient(90deg, rgb(6 18 13 / .28), transparent 65%); }
 
 .backdrop-network-art { overflow: hidden; background: #111722; perspective: 850px; }
 .backdrop-network-grid {
@@ -135,6 +139,7 @@
 @media (max-width: 700px) {
   .backdrop-architecture .backdrop-art { object-position: 39% 54%; }
   .backdrop-coast .backdrop-art { object-position: 71% 58%; }
+  .backdrop-jade .backdrop-art { object-position: 57% 50%; }
   .backdrop-network-grid { background-size: 56px 56px; inset: -10% -65%; }
   .backdrop-network-plane { width: 105vw; height: 32vh; }
   .plane-primary { left: 47%; top: 38%; }

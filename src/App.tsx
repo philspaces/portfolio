@@ -156,8 +156,8 @@ function RealProjectDetails({ project }: { project: RealProject }) {
   return <section className="details-section real-project-details" aria-labelledby="details-heading">
     <div className="details-heading"><h2 id="details-heading">The build<span>.</span></h2><p>{project.description}</p></div>
     <div className="real-details-grid">
-      <div><h3>Stack</h3><ul className="stack-list">{project.stack.map(item => <li key={item}>{item}</li>)}</ul></div>
-      <div><h3>Architecture</h3><p>{project.architectureNote}</p><div className="real-product-link"><WebsiteLink project={project} className="button-text" /><span>{project.availability}</span></div></div>
+      <aside className="real-build-note"><span className="build-kicker">Mobile / learning system</span><h3>Practice in<br />different forms.</h3><ul className="stack-list" aria-label="Technology stack">{project.stack.map(item => <li key={item}>{item}</li>)}</ul><p>{project.architectureNote}</p><div className="real-product-link"><WebsiteLink project={project} className="button-text" /><span>{project.availability}</span></div></aside>
+      <div className="real-feature-list"><h3>Learning flows</h3><dl>{project.features.map((feature, index) => <div key={feature.title}><span className="feature-number" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span><dt>{feature.title}</dt><dd>{feature.detail}</dd></div>)}</dl></div>
     </div>
   </section>;
 }

@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" fill="none">
+  <!-- Decorative calligraphic forms, not product UI or a claimed app screen. -->
+  <defs>
+    <linearGradient id="room" x1="110" y1="940" x2="1440" y2="90" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0e1d19"/><stop offset=".52" stop-color="#203d30"/><stop offset="1" stop-color="#4b6250"/>
+    </linearGradient>
+    <linearGradient id="ink" x1="250" y1="880" x2="1100" y2="30" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0c1b17"/><stop offset=".37" stop-color="#254b39"/><stop offset=".7" stop-color="#607b60"/><stop offset="1" stop-color="#9aa88b"/>
+    </linearGradient>
+    <linearGradient id="edge" x1="160" y1="610" x2="1170" y2="210" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#142c22"/><stop offset=".48" stop-color="#486f50"/><stop offset="1" stop-color="#bac2a4"/>
+    </linearGradient>
+    <linearGradient id="fold" x1="1020" y1="80" x2="560" y2="420" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#142b21"/><stop offset=".52" stop-color="#406046"/><stop offset="1" stop-color="#8b9d7e"/>
+    </linearGradient>
+    <linearGradient id="lower" x1="1260" y1="490" x2="790" y2="1040" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#839478"/><stop offset=".32" stop-color="#44664d"/><stop offset=".72" stop-color="#1a3628"/><stop offset="1" stop-color="#0b1a15"/>
+    </linearGradient>
+    <linearGradient id="lower-edge" x1="1050" y1="550" x2="1490" y2="910" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#a4b091"/><stop offset=".5" stop-color="#456c4c"/><stop offset="1" stop-color="#183023"/>
+    </linearGradient>
+    <filter id="cast" x="-30%" y="-30%" width="160%" height="180%">
+      <feGaussianBlur stdDeviation="27"/>
+    </filter>
+  </defs>
+  <path fill="url(#room)" d="M0 0h1600v1000H0z"/>
+  <!-- The open sweep and its turned edge echo a broad ink stroke. -->
+  <path d="M-160 745C145 292 465 490 788 122c104-118 108-252 40-386h441c235 269 134 496-157 624C698 542 271 414 87 897Z" fill="#07120e" opacity=".58" filter="url(#cast)" transform="translate(46 52)"/>
+  <path d="M-160 745C145 292 465 490 788 122c104-118 108-252 40-386h441c235 269 134 496-157 624C698 542 271 414 87 897Z" fill="url(#ink)"/>
+  <path d="M87 897C271 414 698 542 1112 360c169-74 274-182 291-313-31 168-134 289-293 363C698 601 306 467 137 924Z" fill="url(#edge)"/>
+  <path d="M828-264c68 134 64 268-40 386-86 98-170 155-264 195 191-40 337-93 433-208 112-135 109-254 21-373Z" fill="url(#fold)"/>
+  <path d="M1435 429c-322 5-637 243-737 571h532c1-250 136-390 484-356V450Z" fill="#07150e" opacity=".65" filter="url(#cast)" transform="translate(-24 38)"/>
+  <!-- A second stroke curls beyond the viewport, rather than ending in a panel. -->
+  <path d="M1435 429c-322 5-637 243-737 571h532c1-250 136-390 484-356V450Z" fill="url(#lower)"/>
+  <path d="M1435 429c-223 6-444 119-590 305 165-165 377-238 590-227l279 61V450Z" fill="url(#lower-edge)"/>
+  <path d="M1230 1000c1-250 136-390 484-356-349-78-572 41-583 356Z" fill="#11291c"/>
+</svg>

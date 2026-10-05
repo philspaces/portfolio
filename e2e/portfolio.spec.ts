@@ -122,10 +122,11 @@ test('JadeWords is featured with an explicit screen preview and a native externa
 
 test('missing JadeWords screens and preview keep the structural backdrop and explicit fallback usable', async ({ page }) => {
   await page.route('**/jade-words/screens/*.webp', route => route.abort());
+  await page.route('**/jade-words/ink-landscape.svg', route => route.abort());
   await page.route('**/jade-words/media/features.mp4', route => route.abort());
   await arrive(page);
   await expectProject(page, 'jade-words');
-  await expect(page.locator('.backdrop-jade .backdrop-art')).toHaveCount(0);
+  await expect(page.locator('.backdrop-jade .backdrop-art')).toHaveAttribute('hidden', '');
   await expect(page.locator('.backdrop-jade .backdrop-fallback')).toBeAttached();
   await expect(page.locator('.stage-scene .jade-screen-layer.is-current').getByText('App screen unavailable', { exact: true })).toBeVisible();
   await explore(page, 'Explore preview');

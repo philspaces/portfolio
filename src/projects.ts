@@ -25,6 +25,7 @@ export interface RealProject extends ProjectBase {
   website: { url: string; label: string };
   stack: string[];
   architectureNote: string;
+  features: { title: string; detail: string }[];
   availability: string;
 }
 
@@ -50,14 +51,22 @@ export const projects: Project[] = [
     status: 'real',
     title: 'JadeWords',
     category: 'Chinese-learning app',
-    oneLiner: 'Chinese learning across vocabulary, grammar and character writing.',
+    oneLiner: 'Chinese learning, from HSK vocabulary to Vocab Songs.',
     tags: ['Expo', 'React Native', 'TypeScript'],
     kind: 'jade',
-    backdrop: { theme: 'jade' },
-    description: 'A mobile app for Chinese practice, with English and Vietnamese explanations. Vocabulary, grammar and handwriting form the core; Vocab Songs extends selected words into music.',
+    backdrop: { theme: 'jade', asset: 'jade-words/ink-landscape.svg' },
+    description: 'A Mandarin learning app combining vocabulary, recall, grammar, speaking and character writing. Vocab Songs brings selected words into music, with pinyin and translations.',
     website: { url: 'https://jadewords.com/', label: 'View Jade Words' },
     stack: ['Expo', 'React Native', 'TypeScript', 'Supabase'],
     architectureNote: 'A typed mobile client uses Supabase Auth and PostgreSQL for content and progress. Song generation runs in Edge Functions, outside the mobile UI.',
+    features: [
+      { title: 'Vocabulary', detail: 'HSK levels and topic sets, with pinyin, meanings, audio and examples.' },
+      { title: 'Flashcards', detail: 'Reveal a card, mark remembered or missed, then retry missed words.' },
+      { title: 'Grammar', detail: 'Explanations and exercises, example audio, and in-place word lookup with audio.' },
+      { title: 'Character writing', detail: 'Watch stroke order, trace with guidance, then write from memory.' },
+      { title: 'Speaking', detail: 'Hear a Mandarin phrase, speak it, and inspect the recognized text.' },
+      { title: 'Vocab Songs', detail: 'Choose words and a sound preset for style and mood. Follow pinyin, translations and line replay.' },
+    ],
     availability: 'Coming soon to iOS & Android',
   },
   {

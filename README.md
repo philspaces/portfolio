@@ -67,16 +67,20 @@ Open `http://127.0.0.1:4173/portfolio/`. Assets and internal links include the c
 - JadeWords starts selected. **View Jade Words** opens the verified product website in a new tab; **Explore preview** opens an inline viewer of actual vocabulary, grammar, and handwriting screenshots. The optional app-preview film starts paused with native controls. The screenshot viewer demonstrates the screens, not a functioning mobile app.
 - Secondary immersive labels fade after 2.5 seconds of inactivity. Pointer, touch, or keyboard input reveals them. Exit stays available; focused or active controls keep labels visible. Reduced motion keeps labels visible and disables transitions.
 - Scroll naturally into the architecture and details. The architecture is sticky on desktop and part of the normal column on mobile.
-- JadeWords has a brief stack and architecture snapshot rather than the long placeholder case-study structure.
+- JadeWords has a concise build summary and verified learning-flow list.
 - **Resume** opens an availability dialog without an invented document link.
 
 Demo state is local and is not persisted. Missing artwork has a useful fallback. There is no global Space shortcut, scroll interception, iframe focus, or custom cursor.
 
 ## Replace the placeholders
 
+Read the durable [design context and acceptance checklist](docs/DESIGN.md) before adding or changing a project. [AGENTS.md](AGENTS.md) makes this part of the contributor workflow. Forma is the visual reference for full-viewport atmosphere and Browse/Immerse continuity; real content must preserve the same presentation quality.
+
 [`src/projects.ts`](src/projects.ts) remains the typed content layer. `RealProject` and `PlaceholderProject` are distinct records, identified by `status`; real projects do not require invented placeholder role or evidence fields. Replace concept records with approved project material. A project's stable `id` determines its generated URL.
 
 [`src/JadeShowcase.tsx`](src/JadeShowcase.tsx) uses owned JadeWords media copied from `language-app/apps/web/assets/` into `public/jade-words/`. The vocabulary, grammar, and writing images are actual app captures. `features.mp4` is a silent overview composed from those captures; it is not a live app recording. The illustrative Songs film is not used in this portfolio. Product sources were checked against the feature audit, package files, current mobile services, and the public website on 2026-10-05. NestJS is an optional service in the product repository, not the primary mobile backend.
+
+JadeWords places these screens directly above a full-viewport ink landscape in muted jade tones. `ink-landscape.svg` is small decorative project artwork, not app UI. Its concise build section covers vocabulary, flashcards, grammar, character writing, native speaking recognition and Vocab Songs. Feature evidence and limitations are recorded in the design document.
 
 [`src/Demo.tsx`](src/Demo.tsx) contains the three local demo surfaces. Replace the corresponding presentation with an approved real demonstration. The typed `backdrop` field selects a theme and optional asset under `public/`; [`src/Backdrop.tsx`](src/Backdrop.tsx) retains decorative layers for interruptible crossfades and supplies CSS fallbacks.
 

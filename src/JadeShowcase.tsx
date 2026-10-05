@@ -66,7 +66,7 @@ function JadeComposition({ interactive }: { interactive: boolean }) {
     <div className={`jade-board${previewOpen ? ' jade-board--film' : ''}`}>
       <div className="jade-editorial" aria-hidden={!interactive}>
         <BrandMark />
-        <div className="jade-editorial-copy"><span className="jade-eyebrow">CHINESE LEARNING</span><h3>Chinese,<br />in practice.</h3><p>Vocabulary.<br />Grammar.<br />Writing.</p></div>
+        <div className="jade-editorial-copy"><span className="jade-eyebrow">CHINESE LEARNING</span><h3>Mandarin,<br />in practice.</h3><p>Study words. Write characters.<br />Learn through songs.</p></div>
         <span className="jade-editorial-note">REAL APP SCREENS</span>
       </div>
 

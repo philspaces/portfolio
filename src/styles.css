@@ -99,14 +99,23 @@ main:focus, h1:focus { outline: none; }
 .details-heading h2 { font-size: clamp(33px, 4vw, 52px); letter-spacing: -1.9px; font-weight: 450; }
 .details-heading p { color: var(--muted); font-size: 13px; margin-top: 13px; }
 .real-project-details .details-heading p { max-width: 72ch; line-height: 1.75; }
-.portfolio[data-project='jade-words'] .real-project-details { background: #1d2722; }
-.real-details-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 70px; }
+.portfolio[data-project='jade-words'] .real-project-details { background: linear-gradient(180deg, transparent, rgb(9 22 16 / .91) 180px, rgb(9 22 16 / .95)); }
+.real-details-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 70px; align-items: start; }
 .real-details-grid > div { border-top: 1px solid var(--line); padding-top: 25px; }
 .real-details-grid h3 { font-size: 18px; font-weight: 450; margin-bottom: 20px; }
 .real-details-grid p { max-width: 60ch; color: #b0b3bd; font-size: 13px; line-height: 1.75; }
 .stack-list { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 12px 24px; font-family: 'Geist Mono Variable', monospace; font-size: 12px; color: #d5dfda; }
 .real-product-link { display: flex; align-items: center; flex-wrap: wrap; gap: 26px; margin-top: 27px; }
 .real-product-link > span { color: #a9b4ad; font-size: 11px; }
+.real-build-note { position: sticky; top: 36px; }
+.build-kicker { font-family: 'Geist Mono Variable', monospace; font-size: 10px; color: #b3c6b8; }
+.real-build-note h3 { font-size: clamp(28px, 3vw, 40px); letter-spacing: -1.3px; line-height: 1.12; margin-top: 26px; }
+.real-build-note .stack-list { margin-block: 28px; }
+.real-feature-list dl { margin: 0; }
+.real-feature-list dl > div { display: grid; grid-template-columns: 24px 140px 1fr; gap: 15px; border-top: 1px solid rgb(176 195 176 / .22); padding: 22px 0; }
+.feature-number { font-family: 'Geist Mono Variable', monospace; font-size: 10px; color: #adc4b1; padding-top: 3px; }
+.real-feature-list dt { font-size: 13px; font-weight: 500; color: #e8eee6; }
+.real-feature-list dd { margin: 0; font-size: 12px; line-height: 1.7; color: #b5beb6; }
 .details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(50px, 9vw, 145px); align-items: start; }
 .architecture-visual { position: sticky; top: 36px; background: #202124; border: 1px solid var(--line); border-radius: var(--radius); padding: 26px; }
 .architecture-caption { color: #c1c2c6; display: flex; align-items: center; justify-content: space-between; font-size: 11px; }
@@ -211,6 +220,10 @@ main:focus, h1:focus { outline: none; }
   .details-heading p { font-size: 12px; }
   .details-grid { grid-template-columns: 1fr; gap: 38px; }
   .real-details-grid { grid-template-columns: 1fr; gap: 30px; }
+  .real-build-note { position: static; }
+  .real-build-note h3 { font-size: 31px; }
+  .real-feature-list dl > div { grid-template-columns: 23px 1fr; gap: 6px 12px; padding-block: 19px; }
+  .real-feature-list dd { grid-column: 2; }
   .architecture-visual { position: static; padding: 23px; }
   .architecture-path { margin: 35px 0; }
   .architecture-node { padding: 17px; font-size: 13px; margin-bottom: 20px; }
