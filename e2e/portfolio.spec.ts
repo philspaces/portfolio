@@ -125,7 +125,8 @@ test('missing JadeWords screens and preview keep the structural backdrop and exp
   await page.route('**/jade-words/media/features.mp4', route => route.abort());
   await arrive(page);
   await expectProject(page, 'jade-words');
-  await expect(page.locator('.backdrop-jade .backdrop-art')).toHaveAttribute('hidden', '');
+  await expect(page.locator('.backdrop-jade .backdrop-art')).toHaveCount(0);
+  await expect(page.locator('.backdrop-jade .backdrop-fallback')).toBeAttached();
   await expect(page.locator('.stage-scene .jade-screen-layer.is-current').getByText('App screen unavailable', { exact: true })).toBeVisible();
   await explore(page, 'Explore preview');
   const viewer = page.getByRole('region', { name: 'JadeWords screen viewer', exact: true });

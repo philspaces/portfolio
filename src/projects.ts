@@ -53,7 +53,7 @@ export const projects: Project[] = [
     oneLiner: 'Chinese learning across vocabulary, grammar and character writing.',
     tags: ['Expo', 'React Native', 'TypeScript'],
     kind: 'jade',
-    backdrop: { theme: 'jade', asset: 'jade-words/screens/word.webp' },
+    backdrop: { theme: 'jade' },
     description: 'A mobile app for Chinese practice, with English and Vietnamese explanations. Vocabulary, grammar and handwriting form the core; Vocab Songs extends selected words into music.',
     website: { url: 'https://jadewords.com/', label: 'View Jade Words' },
     stack: ['Expo', 'React Native', 'TypeScript', 'Supabase'],

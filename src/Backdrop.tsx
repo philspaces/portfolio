@@ -4,7 +4,7 @@ import { projects } from './projects';
 import type { Project } from './projects';
 import './backdrop.css';
 
-/** Ambient concept art is decorative; every layer stays mounted for interruptible crossfades. */
+/** Every project layer stays mounted for interruptible crossfades. */
 export function Backdrop({ project, immersed = false }: { project: Project; immersed?: boolean }) {
   const backdropRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -38,7 +38,6 @@ export function Backdrop({ project, immersed = false }: { project: Project; imme
         </div>
       ))}
       <div className="backdrop-legibility" />
-      <div className="backdrop-grain" />
     </div>
   );
 }

@@ -13,8 +13,7 @@
 .backdrop-art,
 .backdrop-network-art,
 .backdrop-tint,
-.backdrop-legibility,
-.backdrop-grain {
+.backdrop-legibility {
   position: absolute;
   inset: 0;
 }
@@ -62,14 +61,9 @@
   background: linear-gradient(115deg, rgb(11 33 79 / .38), transparent 68%);
 }
 
-.backdrop-jade .backdrop-art {
-  object-position: 72% 46%;
-  filter: blur(32px) brightness(.45) saturate(.65);
-  transform: scale(1.12);
-}
-
-.backdrop-jade .backdrop-fallback { background: #203b32; }
-.backdrop-jade .backdrop-tint { background: rgb(10 28 22 / .56); }
+.backdrop-jade .backdrop-fallback { background: #1d2722; }
+.backdrop-jade .backdrop-tint { background: none; }
+.portfolio-backdrop[data-project='jade-words'] .backdrop-legibility { background: none; }
 
 .backdrop-network-art { overflow: hidden; background: #111722; perspective: 850px; }
 .backdrop-network-grid {
@@ -137,11 +131,6 @@
 }
 
 .portfolio-backdrop.is-immersed .backdrop-legibility { opacity: .86; }
-
-.backdrop-grain {
-  opacity: .05;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='grain'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Cpath fill='%23fff' filter='url(%23grain)' d='M0 0h160v160H0z'/%3E%3C/svg%3E");
-}
 
 @media (max-width: 700px) {
   .backdrop-architecture .backdrop-art { object-position: 39% 54%; }
