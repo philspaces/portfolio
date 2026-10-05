@@ -1,4 +1,4 @@
-import { getProject } from './projects';
+import { getProject, projects } from './projects';
 
 export interface PageMetadata {
   title: string;
@@ -12,9 +12,12 @@ export function getPageMetadata(route: string): PageMetadata {
   const robots = 'noindex, follow';
 
   if (path === '/') {
+    const featured = projects.find(project => project.status === 'real');
     return {
       title: 'Long Phi Nguyen · Living Showcase',
-      description: 'Long Phi Nguyen’s portfolio in progress. Explore three fictional interactive concepts, ready for real project content.',
+      description: featured
+        ? `Explore ${featured.title}, a ${featured.category.toLowerCase()}, alongside clearly labelled interface concepts in Long Phi Nguyen’s portfolio.`
+        : 'Explore clearly labelled interface concepts in Long Phi Nguyen’s portfolio.',
       robots,
     };
   }
@@ -29,6 +32,13 @@ export function getPageMetadata(route: string): PageMetadata {
 
   const project = path.startsWith('/work/') ? getProject(path.slice(6)) : undefined;
   if (project) {
+    if (project.status === 'real') {
+      return {
+        title: `${project.title} · Long Phi Nguyen`,
+        description: `${project.oneLiner} Built with ${project.stack.join(', ')}.`,
+        robots,
+      };
+    }
     return {
       title: `${project.title} concept · Long Phi Nguyen`,
       description: `Explore ${project.title}, a fictional ${project.category.toLowerCase()}. Interactive demo and placeholder case study for Long Phi Nguyen’s portfolio.`,

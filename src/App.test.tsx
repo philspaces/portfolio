@@ -83,7 +83,7 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-const tab = (name: 'Forma' | 'Roam' | 'Relay') => screen.getByRole('tab', { name: new RegExp(name, 'i') });
+const tab = (name: 'JadeWords' | 'Forma' | 'Roam' | 'Relay') => screen.getByRole('tab', { name: new RegExp(name, 'i') });
 const caseLink = () => screen.getByRole('link', { name: /read case study/i });
 const expectBackdrop = (id: string) => {
   const backdrop = document.querySelector('.portfolio-backdrop');
@@ -107,21 +107,46 @@ describe('The Living Showcase', () => {
     await user.click(screen.getByRole('link', { name: /skip to content/i }));
     expect(screen.getByRole('main')).toHaveFocus();
     expect(window.location.pathname).toBe('/');
-    expect(tab('Forma')).toHaveAttribute('aria-selected', 'true');
+    expect(tab('JadeWords')).toHaveAttribute('aria-selected', 'true');
+  });
+
+  it('features the real JadeWords project with a safe external website link and an explicit preview', async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    expect(tab('JadeWords')).toHaveAttribute('aria-selected', 'true');
+    expectBackdrop('jade-words');
+    const visit = screen.getAllByRole('link', { name: /view jade words/i })[0];
+    expect(visit).toHaveAttribute('href', 'https://jadewords.com/');
+    expect(visit).toHaveAttribute('target', '_blank');
+    expect(visit).toHaveAttribute('rel', expect.stringContaining('noopener'));
+    expect(visit).toHaveAttribute('rel', expect.stringContaining('noreferrer'));
+    expect(screen.queryByRole('link', { name: /read case study/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: /download|get the app|app store|google play/i })).not.toBeInTheDocument();
+    const preview = screen.getByRole('button', { name: /explore preview/i });
+    await user.click(preview);
+    expect(screen.getByRole('button', { name: /exit demo/i })).toHaveFocus();
+    await user.keyboard('{Escape}');
+    await waitFor(() => expect(preview).toHaveFocus());
+    expect(tab('JadeWords')).toHaveAttribute('aria-selected', 'true');
   });
 
   it('keeps one selection through repeated and rapid project changes without scrolling', async () => {
     const user = userEvent.setup();
     render(<App />);
-    expect(tab('Forma')).toHaveAttribute('aria-selected', 'true');
+    expect(tab('JadeWords')).toHaveAttribute('aria-selected', 'true');
 
     vi.mocked(window.scrollTo).mockClear();
     scrollIntoView.mockClear();
-    for (const name of ['Roam', 'Relay', 'Forma', 'Roam', 'Forma'] as const) {
+    for (const name of ['Roam', 'Relay', 'Forma', 'JadeWords', 'Roam', 'Forma'] as const) {
       await user.click(tab(name));
       expect(tab(name)).toHaveAttribute('aria-selected', 'true');
-      expect(caseLink()).toHaveAttribute('href', `/work/${name.toLowerCase()}/`);
-      expectBackdrop(name.toLowerCase());
+      if (name === 'JadeWords') {
+        expect(screen.getAllByRole('link', { name: /view jade words/i })[0]).toHaveAttribute('href', 'https://jadewords.com/');
+        expectBackdrop('jade-words');
+      } else {
+        expect(caseLink()).toHaveAttribute('href', `/work/${name.toLowerCase()}/`);
+        expectBackdrop(name.toLowerCase());
+      }
     }
 
     act(() => {
@@ -140,6 +165,7 @@ describe('The Living Showcase', () => {
   it('keeps the reading selection when another project is hovered', async () => {
     const user = userEvent.setup();
     render(<App />);
+    await user.click(tab('Forma'));
     await user.hover(tab('Roam'));
     expect(tab('Forma')).toHaveAttribute('aria-selected', 'true');
     expect(tab('Roam')).toHaveAttribute('aria-selected', 'false');
@@ -151,34 +177,35 @@ describe('The Living Showcase', () => {
   it('scopes arrow keys to the project strip and moves focus with selection', async () => {
     const user = userEvent.setup();
     render(<App />);
-    tab('Forma').focus();
+    tab('JadeWords').focus();
     await user.keyboard('{ArrowRight}');
-    expect(tab('Roam')).toHaveFocus();
-    expect(tab('Roam')).toHaveAttribute('aria-selected', 'true');
+    expect(tab('Forma')).toHaveFocus();
+    expect(tab('Forma')).toHaveAttribute('aria-selected', 'true');
     await user.keyboard('{End}');
     expect(tab('Relay')).toHaveFocus();
     await user.keyboard('{ArrowRight}');
-    expect(tab('Forma')).toHaveFocus();
+    expect(tab('JadeWords')).toHaveFocus();
     await user.keyboard('{ArrowLeft}');
     expect(tab('Relay')).toHaveFocus();
     await user.keyboard('{Home}');
-    expect(tab('Forma')).toHaveFocus();
+    expect(tab('JadeWords')).toHaveFocus();
 
     const globalSpace = new KeyboardEvent('keydown', { key: ' ', code: 'Space', bubbles: true, cancelable: true });
     window.dispatchEvent(globalSpace);
     fireEvent.keyDown(window, { key: 'ArrowRight' });
     expect(globalSpace.defaultPrevented).toBe(false);
-    expect(tab('Forma')).toHaveAttribute('aria-selected', 'true');
+    expect(tab('JadeWords')).toHaveAttribute('aria-selected', 'true');
   });
 
   it('exits the inline demo with Escape or its exit button and restores the entry focus', async () => {
     const user = userEvent.setup();
     render(<App />);
+    await user.click(tab('Forma'));
     await user.click(screen.getByRole('button', { name: /explore demo/i }));
     expect(screen.getAllByRole('button', { name: /exit demo/i })[0]).toBeVisible();
     await user.keyboard('{Escape}');
     await waitFor(() => expect(screen.queryByRole('button', { name: /exit demo/i })).not.toBeInTheDocument());
-    expect(screen.getByRole('button', { name: /explore demo/i })).toHaveFocus();
+    await waitFor(() => expect(screen.getByRole('button', { name: /explore demo/i })).toHaveFocus());
 
     await user.click(screen.getByRole('button', { name: /explore demo/i }));
     await user.click(screen.getAllByRole('button', { name: /exit demo/i })[0]);
@@ -189,6 +216,7 @@ describe('The Living Showcase', () => {
   it('requires a new explicit Explore action after changing projects', async () => {
     const user = userEvent.setup();
     render(<App />);
+    await user.click(tab('Forma'));
     await user.click(screen.getByRole('button', { name: /explore demo/i }));
     await user.click(tab('Roam'));
     expect(screen.getByRole('button', { name: /explore demo/i })).toHaveAttribute('aria-expanded', 'false');
@@ -200,6 +228,7 @@ describe('The Living Showcase', () => {
   it('keeps immersion when Escape belongs to the Resume overlay', async () => {
     const user = userEvent.setup();
     render(<App />);
+    await user.click(tab('Forma'));
     await user.click(screen.getByRole('button', { name: /explore demo/i }));
     await user.click(screen.getByRole('button', { name: /^resume$/i }));
     await user.keyboard('{Escape}');
@@ -221,7 +250,20 @@ describe('The Living Showcase', () => {
     expect(await screen.findByRole('heading', { level: 1, name: /relay/i })).toBeVisible();
     expectBackdrop('relay');
     arriveAt('/');
-    expect(await screen.findByRole('tab', { name: /forma/i })).toBeVisible();
+    expect(await screen.findByRole('tab', { name: /jadewords/i })).toBeVisible();
+    expectBackdrop('jade-words');
+  });
+
+  it('renders the direct JadeWords overview without fictional evidence or unverified author claims', async () => {
+    arriveAt('/work/jade-words/');
+    render(<App />);
+    expect(screen.getByRole('heading', { level: 1, name: /JadeWords/i })).toBeVisible();
+    expectBackdrop('jade-words');
+    expect(screen.getByRole('link', { name: /all projects/i })).toHaveAttribute('href', '/');
+    expect(screen.queryByText(/Fictional case study|Author input needed|No results are claimed/i)).not.toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: /impact & evidence|role & contribution/i })).not.toBeInTheDocument();
+    arriveAt('/work/forma/');
+    expect(await screen.findByRole('heading', { name: /role & contribution/i })).toBeVisible();
     expectBackdrop('forma');
   });
 
@@ -260,7 +302,7 @@ describe('The Living Showcase', () => {
     render(<App />);
     expect(screen.getByRole('heading', { level: 1, name: /nothing here/i })).toBeVisible();
     await user.click(screen.getByRole('link', { name: /all projects/i }));
-    expect(await screen.findByRole('tab', { name: /forma/i })).toBeVisible();
+    expect(await screen.findByRole('tab', { name: /jadewords/i })).toBeVisible();
   });
 
   it('opens the biography placeholder and returns through Work', async () => {
@@ -271,7 +313,7 @@ describe('The Living Showcase', () => {
     expect(screen.getByText(/biography content has not been provided/i)).toBeVisible();
     expect(window.location.pathname).toBe('/about/');
     await user.click(screen.getByRole('link', { name: /^work$/i }));
-    expect(await screen.findByRole('tab', { name: /forma/i })).toBeVisible();
+    expect(await screen.findByRole('tab', { name: /jadewords/i })).toBeVisible();
   });
 
   it('shows an honest Resume placeholder and lets the user close it', async () => {
@@ -289,6 +331,7 @@ describe('The Living Showcase', () => {
     vi.useFakeTimers();
     try {
       render(<App />);
+      fireEvent.click(tab('Forma'));
       fireEvent.click(screen.getByRole('button', { name: /explore demo/i }));
       const stage = screen.getByRole('region', { name: /forma project showcase/i });
       act(() => vi.advanceTimersByTime(2600));

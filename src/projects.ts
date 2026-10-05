@@ -1,15 +1,15 @@
-export type DemoKind = 'web' | 'mobile' | 'system';
+export type DemoKind = 'web' | 'mobile' | 'system' | 'jade';
 
 export interface ProjectBackdrop {
-  theme: 'architecture' | 'coast' | 'network';
-  /** Decorative generated concept art, relative to public/. Omit for the structural CSS backdrop. */
+  theme: 'architecture' | 'coast' | 'network' | 'jade';
+  /** Public asset path. Omit for a structural CSS backdrop. */
   asset?: string;
 }
 
-export interface Project {
+interface ProjectBase {
   /** Stable URL slug. Replace this together with the corresponding project content. */
   id: string;
-  number: '01' | '02' | '03';
+  number: string;
   title: string;
   category: string;
   oneLiner: string;
@@ -17,6 +17,20 @@ export interface Project {
   kind: DemoKind;
   backdrop: ProjectBackdrop;
   description: string;
+}
+
+export interface RealProject extends ProjectBase {
+  status: 'real';
+  kind: 'jade';
+  website: { url: string; label: string };
+  stack: string[];
+  architectureNote: string;
+  availability: string;
+}
+
+export interface PlaceholderProject extends ProjectBase {
+  status: 'placeholder';
+  kind: Exclude<DemoKind, 'jade'>;
   role: string;
   context: string;
   constraints: string[];
@@ -26,15 +40,30 @@ export interface Project {
   demoHint: string;
 }
 
-/**
- * Fictional content for the portfolio's first-run presentation.
- * These concepts are not Long Phi Nguyen's projects or professional achievements.
- * Replace each complete record with verified content before presenting real work.
- */
+export type Project = RealProject | PlaceholderProject;
+
+/** Real records use verified product sources; concepts remain explicitly fictional. */
 export const projects: Project[] = [
   {
-    id: 'forma',
+    id: 'jade-words',
     number: '01',
+    status: 'real',
+    title: 'JadeWords',
+    category: 'Chinese-learning app',
+    oneLiner: 'Chinese learning across vocabulary, grammar and character writing.',
+    tags: ['Expo', 'React Native', 'TypeScript'],
+    kind: 'jade',
+    backdrop: { theme: 'jade', asset: 'jade-words/screens/word.webp' },
+    description: 'A mobile app for Chinese practice, with English and Vietnamese explanations. Vocabulary, grammar and handwriting form the core; Vocab Songs extends selected words into music.',
+    website: { url: 'https://jadewords.com/', label: 'View Jade Words' },
+    stack: ['Expo', 'React Native', 'TypeScript', 'Supabase'],
+    architectureNote: 'A typed mobile client uses Supabase Auth and PostgreSQL for content and progress. Song generation runs in Edge Functions, outside the mobile UI.',
+    availability: 'Coming soon to iOS & Android',
+  },
+  {
+    id: 'forma',
+    number: '02',
+    status: 'placeholder',
     title: 'Forma',
     category: 'Web product concept',
     oneLiner: 'A considered workspace for collecting visual ideas and seeing them in context.',
@@ -89,7 +118,8 @@ export const projects: Project[] = [
   },
   {
     id: 'roam',
-    number: '02',
+    number: '03',
+    status: 'placeholder',
     title: 'Roam',
     category: 'Mobile product concept',
     oneLiner: 'A pocket-sized way to discover a place and shape an afternoon.',
@@ -144,7 +174,8 @@ export const projects: Project[] = [
   },
   {
     id: 'relay',
-    number: '03',
+    number: '04',
+    status: 'placeholder',
     title: 'Relay',
     category: 'System interface concept',
     oneLiner: 'An observable path from incoming event to completed work.',

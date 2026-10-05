@@ -1,0 +1,100 @@
+.jade-showcase {
+  --jade-paper: #fff9ef;
+  --jade-ink: #25211d;
+  --jade-muted: #756d63;
+  --jade-line: #e8dfd2;
+  width: 100%;
+  height: 100%;
+  padding: 18px 48px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--jade-ink);
+}
+.jade-board { position: relative; width: min(1120px, 100%); height: 100%; max-height: 560px; background: var(--jade-paper); border: 1px solid var(--jade-line); display: grid; grid-template-columns: 1fr .85fr .65fr; align-items: center; column-gap: 3%; padding: 22px 5%; overflow: hidden; }
+.jade-editorial { height: 100%; display: flex; flex-direction: column; justify-content: space-between; min-width: 0; padding-block: 7px; }
+.jade-brand { display: flex; align-items: center; gap: 11px; font-family: Georgia, 'Times New Roman', serif; font-size: clamp(19px, 2vw, 27px); letter-spacing: -.6px; }
+.jade-brand img { width: 38px; height: 38px; border-radius: 9px; object-fit: contain; }
+.jade-eyebrow, .jade-editorial-note { font-family: 'Geist Mono Variable', monospace; font-size: 8px; letter-spacing: 1.25px; color: #695d51; }
+.jade-editorial-copy h3 { margin-top: 17px; font-family: Georgia, 'Times New Roman', serif; font-size: clamp(30px, 4.4vw, 61px); font-weight: 400; line-height: 1.03; letter-spacing: -2.1px; }
+.jade-editorial-copy p { margin-top: 22px; font-size: 11px; line-height: 1.7; color: var(--jade-muted); }
+.jade-primary-screen { height: 100%; min-height: 0; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 9px; position: relative; z-index: 2; }
+.jade-device { position: relative; height: calc(100% - 20px); max-width: 100%; aspect-ratio: 600 / 1304; border: 4px solid var(--jade-ink); border-radius: 11px; background: var(--jade-paper); }
+.jade-screen-layer { position: absolute; inset: 0; opacity: 0; transition: opacity .55s cubic-bezier(.22, 1, .36, 1); pointer-events: none; }
+.jade-screen-layer.is-current { opacity: 1; }
+.jade-device img, .jade-secondary-screen img, .jade-mini-screen img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.jade-device img { border-radius: 7px; }
+.jade-screen-caption { display: flex; align-items: center; gap: 7px; flex: 0 0 11px; font-family: 'Geist Mono Variable', monospace; font-size: 8px; color: #695d51; }
+.jade-screen-caption > span:not(.jade-dot) { color: #b2a28e; }
+.jade-dot { width: 5px; height: 5px; background: #168a57; display: inline-block; }
+.jade-dot--blue { background: #2277d6; }
+.jade-dot--cinnabar { background: #e5483f; }
+.jade-secondary-screens { height: 100%; min-height: 0; position: relative; display: flex; align-items: center; justify-content: center; }
+.jade-secondary-screen { height: 65%; aspect-ratio: 600 / 1304; flex-shrink: 0; background: #fff; border: 1px solid #d9d0c3; position: absolute; }
+.jade-secondary-screen--grammar { left: -13%; top: 7%; transform: rotate(-6deg); }
+.jade-secondary-screen--writing { right: -6%; bottom: 6%; transform: rotate(5deg); }
+.jade-screen-fallback { height: 100%; width: 100%; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 10px; color: #756d63; background: #f4efe4; text-align: center; padding: 12px; font-size: 12px; }
+.jade-screen-fallback small { font-size: 9px; line-height: 1.5; }
+.jade-showcase--interactive { padding-top: 90px; padding-bottom: 157px; }
+.jade-showcase--interactive .jade-board { padding-top: 25px; padding-bottom: 83px; max-height: 690px; }
+.jade-viewer-controls { position: absolute; left: 5%; right: 5%; bottom: 20px; padding-top: 15px; border-top: 1px solid var(--jade-line); display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+.jade-screen-buttons { display: flex; gap: 4px; }
+.jade-screen-buttons button, .jade-preview-button { min-height: 36px; border: 1px solid transparent; background: transparent; color: #62564b; border-radius: 3px; padding: 9px 12px; font-size: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 7px; }
+.jade-screen-buttons button[aria-pressed='true'] { border-color: #d4c8b8; color: var(--jade-ink); background: #f4efe4; }
+.jade-screen-buttons button:hover, .jade-preview-button:hover { background: #f4efe4; color: var(--jade-ink); }
+.jade-showcase button:focus-visible, .jade-showcase video:focus-visible { outline: 2px solid #168a57; outline-offset: 3px; }
+.jade-board--film { grid-template-columns: .8fr 2fr; }
+.jade-film { min-height: 0; height: 100%; display: flex; justify-content: center; flex-direction: column; gap: 10px; }
+.jade-film video { width: 100%; max-height: calc(100% - 22px); background: #f4efe4; object-fit: contain; }
+.jade-film-note { font-family: 'Geist Mono Variable', monospace; color: #756d63; font-size: 8px; text-align: center; }
+.jade-film-fallback { min-height: 190px; height: 100%; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 13px; text-align: center; color: #756d63; font-size: 13px; }
+.jade-film-fallback span { max-width: 30ch; font-size: 11px; line-height: 1.6; }
+.jade-mini { height: 100%; width: 100%; background: #fff9ef; display: flex; align-items: center; justify-content: space-between; padding: 5px 12% 5px 10%; overflow: hidden; }
+.jade-mini-wordmark { font-family: Georgia, 'Times New Roman', serif; font-size: 8px; color: #25211d; display: flex; flex-direction: column; gap: 6px; }
+.jade-mini-wordmark span { color: #695d51; font-size: 14px; }
+.jade-mini-screen { height: 100%; aspect-ratio: 600 / 1304; border: 1px solid #25211d; }
+.jade-mini .jade-screen-fallback { padding: 2px; }
+.jade-mini .jade-screen-fallback > :not(svg) { display: none; }
+.jade-mini .jade-screen-fallback svg { width: 10px; }
+@media (max-width: 1023px) {
+  .jade-showcase { padding-inline: 28px; }
+  .jade-board { column-gap: 2%; }
+  .jade-editorial-copy h3 { font-size: 42px; }
+  .jade-showcase--interactive { padding-bottom: 160px; }
+}
+@media (max-width: 767px) {
+  .jade-showcase { padding: 7px 18px 0; }
+  .jade-board { padding: 17px 7%; grid-template-columns: .9fr 1fr; column-gap: 6%; max-height: 510px; }
+  .jade-brand { font-size: 18px; gap: 7px; letter-spacing: -.5px; }
+  .jade-brand img { width: 25px; height: 25px; border-radius: 6px; }
+  .jade-eyebrow { font-size: 6px; letter-spacing: .85px; }
+  .jade-editorial-copy h3 { font-size: 33px; letter-spacing: -1.2px; margin-top: 13px; }
+  .jade-editorial-copy p { font-size: 9px; margin-top: 17px; }
+  .jade-editorial-note { font-size: 6px; letter-spacing: .8px; }
+  .jade-secondary-screens { display: none; }
+  .jade-device { border-width: 3px; border-radius: 9px; }
+  .jade-device img { border-radius: 6px; }
+  .jade-screen-caption { font-size: 6px; gap: 4px; }
+  .jade-showcase--interactive { padding-top: 76px; padding-bottom: 185px; }
+  .jade-showcase--interactive .jade-board { padding-top: 17px; padding-bottom: 100px; column-gap: 0; grid-template-columns: 1fr; }
+  .jade-showcase--interactive .jade-editorial { height: auto; position: absolute; left: 14px; top: 17px; z-index: 1; }
+  .jade-showcase--interactive .jade-editorial-copy, .jade-showcase--interactive .jade-editorial-note { display: none; }
+  .jade-showcase--interactive .jade-brand { font-size: 14px; }
+  .jade-showcase--interactive .jade-brand img { width: 22px; height: 22px; }
+  .jade-showcase--interactive .jade-primary-screen { margin-top: 25px; height: calc(100% - 25px); }
+  .jade-viewer-controls { left: 14px; right: 14px; bottom: 12px; padding-top: 9px; flex-direction: column; gap: 3px; }
+  .jade-screen-buttons { width: 100%; justify-content: center; }
+  .jade-screen-buttons button, .jade-preview-button { min-height: 32px; padding: 8px 10px; font-size: 9px; }
+  .jade-board--film .jade-film { margin-top: 25px; height: calc(100% - 25px); }
+  .jade-film-note { font-size: 6px; line-height: 1.5; }
+  .jade-mini { padding-inline: 7%; }
+  .jade-mini-wordmark { font-size: 7px; }
+}
+@media (max-width: 370px) {
+  .jade-brand { font-size: 15px; }
+  .jade-brand img { width: 22px; height: 22px; }
+  .jade-editorial-copy h3 { font-size: 29px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .jade-screen-layer { transition: none; }
+}

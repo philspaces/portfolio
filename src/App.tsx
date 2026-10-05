@@ -2,17 +2,20 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import type { KeyboardEvent } from 'react';
 import { AnimatePresence, LazyMotion, useIsPresent } from 'motion/react';
 import * as m from 'motion/react-m';
-import { ArrowLeftIcon, XIcon } from '@phosphor-icons/react';
+import { ArrowLeftIcon, ArrowUpRightIcon, XIcon } from '@phosphor-icons/react';
 import { Backdrop } from './Backdrop';
 import { Demo } from './Demo';
+import { JadeShowcase } from './JadeShowcase';
 import { useIdleChrome } from './useIdleChrome';
 import { useMotionPreference } from './useMotionPreference';
 import { getProject, projects } from './projects';
-import type { Project } from './projects';
+import type { Project, RealProject } from './projects';
 import { getPageMetadata } from './metadata';
 import { handleAppNavigation, readBrowserRoute, routeHref, syncLegacyRoute } from './routing';
 
 const loadMotionFeatures = () => import('./motionFeatures').then(module => module.default);
+const realProjects = projects.filter(project => project.status === 'real');
+const conceptCount = projects.filter(project => project.status === 'placeholder').length;
 
 function useRoute(initialRoute?: string) {
   const [route, setRoute] = useState(() => initialRoute ?? readBrowserRoute());
@@ -32,13 +35,26 @@ function useRoute(initialRoute?: string) {
   return route;
 }
 
+function ProjectVisual({ project, interactive = false, compact = false }: { project: Project; interactive?: boolean; compact?: boolean }) {
+  return project.kind === 'jade'
+    ? <JadeShowcase interactive={interactive} compact={compact} />
+    : <Demo kind={project.kind} interactive={interactive} compact={compact} />;
+}
+
+function WebsiteLink({ project, className }: { project: RealProject; className: string }) {
+  return <a className={className} href={project.website.url} target="_blank" rel="noopener noreferrer">
+    {project.website.label}<ArrowUpRightIcon size={16} aria-hidden="true" />
+    <span className="sr-only"> (opens in a new tab)</span>
+  </a>;
+}
+
 function Scene({ project, interactive }: { project: Project; interactive: boolean }) {
   const present = useIsPresent();
   const reducedMotion = useMotionPreference();
   return <m.div className="stage-scene" aria-hidden={!present} inert={!present || !interactive}
     initial={{ opacity: 0, y: reducedMotion ? 0 : 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
     transition={{ duration: reducedMotion ? 0 : 0.55, ease: [0.22, 1, 0.36, 1] }}>
-    <Demo kind={project.kind} interactive={interactive && present} />
+    <ProjectVisual project={project} interactive={interactive && present} />
   </m.div>;
 }
 
@@ -85,7 +101,7 @@ function Stage({ project, caseStudy = false, immersed, setImmersed }: {
   return (
     <section ref={stageRef} className={`showcase-stage${immersed ? ' is-immersed' : ''}${quiet ? ' chrome-quiet' : ''}`} data-chrome={quiet ? 'quiet' : 'visible'} aria-label={`${project.title} project showcase`}>
       {immersed && <div className="immerse-toolbar">
-        <span className="immerse-label">{project.title} <span>/</span> Fictional concept</span>
+        <span className="immerse-label">{project.title} <span>/</span> {project.status === 'real' ? 'App screen preview' : 'Fictional concept'}</span>
         <button ref={exitRef} className="exit-button" onClick={exit}>Exit demo <XIcon size={17} /></button>
       </div>}
       <div className={`stage-visual stage-${project.kind}`}>
@@ -96,13 +112,14 @@ function Stage({ project, caseStudy = false, immersed, setImmersed }: {
       <div className="stage-info">
         <div className="stage-copy">
           <span className="project-category">{project.number} <span>/</span> {project.category}</span>
-          <h2>{project.title}<span className="title-period">.</span></h2>
+          <h2>{project.status === 'real' && !caseStudy ? <a href={routeHref(`/work/${project.id}`)}>{project.title}</a> : project.title}<span className="title-period">.</span></h2>
           <p>{project.oneLiner}</p>
           {!immersed && <div className="project-tags">{project.tags.map(tag => <span key={tag}>{tag}</span>)}</div>}
         </div>
         <div className="stage-actions">
-          <button ref={exploreRef} hidden={immersed} className="button-primary" onClick={explore} aria-expanded={immersed}>Explore demo</button>
-          {!caseStudy && <a className="button-text" href={routeHref(`/work/${project.id}`)}>Read case study</a>}
+          {project.status === 'real' && <WebsiteLink project={project} className="button-primary" />}
+          <button ref={exploreRef} hidden={immersed} className={project.status === 'real' ? 'button-text preview-button' : 'button-primary'} onClick={explore} aria-expanded={immersed}>{project.status === 'real' ? 'Explore preview' : 'Explore demo'}</button>
+          {project.status === 'placeholder' && !caseStudy && <a className="button-text" href={routeHref(`/work/${project.id}`)}>Read case study</a>}
         </div>
       </div>
     </section>
@@ -128,14 +145,25 @@ function ProjectSelector({ selected, select }: { selected: string; select: (id: 
       id={`tab-${project.id}`} className={`project-tab${selected === project.id ? ' is-selected' : ''}`}
       role="tab" aria-selected={selected === project.id} aria-controls="project-panel" tabIndex={selected === project.id ? 0 : -1}
       onClick={() => select(project.id)} onKeyDown={event => handleKey(event, index)}>
-      <div className={`project-thumbnail thumb-${project.kind}`} aria-hidden="true"><Demo kind={project.kind} compact /></div>
-      <div className="tab-copy"><span>{project.title}</span><small>{project.category}</small></div>
+      <div className={`project-thumbnail thumb-${project.kind}`} aria-hidden="true"><ProjectVisual project={project} compact /></div>
+      <div className="tab-copy"><span>{project.title}</span><small>{project.status === 'real' ? project.category : 'Placeholder concept'}</small></div>
       <span className="tab-number">{project.number}</span>
     </button>)}
   </div>;
 }
 
+function RealProjectDetails({ project }: { project: RealProject }) {
+  return <section className="details-section real-project-details" aria-labelledby="details-heading">
+    <div className="details-heading"><h2 id="details-heading">The build<span>.</span></h2><p>{project.description}</p></div>
+    <div className="real-details-grid">
+      <div><h3>Stack</h3><ul className="stack-list">{project.stack.map(item => <li key={item}>{item}</li>)}</ul></div>
+      <div><h3>Architecture</h3><p>{project.architectureNote}</p><div className="real-product-link"><WebsiteLink project={project} className="button-text" /><span>{project.availability}</span></div></div>
+    </div>
+  </section>;
+}
+
 function ProjectDetails({ project }: { project: Project }) {
+  if (project.status === 'real') return <RealProjectDetails project={project} />;
   return <section className="details-section" aria-labelledby="details-heading">
     <div className="details-heading"><h2 id="details-heading">Under the surface<span>.</span></h2><p>A closer look at the {project.title} concept.</p></div>
     <div className="details-grid">
@@ -225,16 +253,16 @@ export default function App({ initialRoute }: { initialRoute?: string } = {}) {
     </header>
     <main ref={mainRef} id="main-content" tabIndex={-1}>
       {browse ? <>
-        <div className="intro"><h1 tabIndex={-1}>A living showcase<span>.</span></h1><p>A portfolio in progress. Three fictional concepts,<br className="desktop-break" /> ready for real work.</p></div>
+        <div className="intro"><h1 tabIndex={-1}>A living showcase<span>.</span></h1><p>{realProjects[0] ? `${realProjects[0].title}, a ${realProjects[0].category.toLowerCase()}.` : 'A portfolio in progress.'}<br className="desktop-break" /> {conceptCount} interface concepts, clearly marked.</p></div>
         <div id="project-panel" role="tabpanel" aria-labelledby={`tab-${selected}`}>
           <Stage project={activeProject} immersed={immersed} setImmersed={setImmersed} />
         </div>
         <ProjectSelector selected={selected} select={select} />
-        <div className="collection-note"><span>03 concepts <span className="note-divider">/</span> All projects are placeholders</span><span>Browse. Explore. Look closer.</span></div>
+        <div className="collection-note"><span>{String(realProjects.length).padStart(2, '0')} {realProjects.length === 1 ? 'project' : 'projects'} <span className="note-divider">/</span> {String(conceptCount).padStart(2, '0')} placeholder concepts</span><span>Browse. Explore. Look closer.</span></div>
         <ProjectDetails project={activeProject} />
       </> : caseProject ? <>
-        <div className="case-header"><a href={routeHref('/')} className="back-link" onClick={() => setSelected(caseProject.id)}><ArrowLeftIcon size={17} /> All projects</a><span>Fictional case study · Placeholder content</span></div>
-        <h1 tabIndex={-1} className="case-heading">{caseProject.title} <span>Concept study</span></h1>
+        <div className="case-header"><a href={routeHref('/')} className="back-link" onClick={() => setSelected(caseProject.id)}><ArrowLeftIcon size={17} /> All projects</a><span>{caseProject.status === 'real' ? caseProject.availability : 'Fictional case study · Placeholder content'}</span></div>
+        <h1 tabIndex={-1} className="case-heading">{caseProject.title} <span>{caseProject.status === 'real' ? 'Project overview' : 'Concept study'}</span></h1>
         <Stage key={caseProject.id} project={caseProject} caseStudy immersed={immersed} setImmersed={setImmersed} />
         <ProjectDetails project={caseProject} />
         <div className="case-next"><p>Keep exploring</p>{projects.filter(p => p.id !== caseProject.id).map(p => <a key={p.id} href={routeHref(`/work/${p.id}`)}>{p.title}</a>)}</div>

@@ -62,6 +62,15 @@
   background: linear-gradient(115deg, rgb(11 33 79 / .38), transparent 68%);
 }
 
+.backdrop-jade .backdrop-art {
+  object-position: 72% 46%;
+  filter: blur(32px) brightness(.45) saturate(.65);
+  transform: scale(1.12);
+}
+
+.backdrop-jade .backdrop-fallback { background: #203b32; }
+.backdrop-jade .backdrop-tint { background: rgb(10 28 22 / .56); }
+
 .backdrop-network-art { overflow: hidden; background: #111722; perspective: 850px; }
 .backdrop-network-grid {
   position: absolute;

@@ -6,8 +6,8 @@ describe('page metadata', () => {
   it('identifies the portfolio without inventing a professional role', () => {
     const metadata = getPageMetadata('/');
     expect(metadata.title).toContain('Long Phi Nguyen');
-    expect(metadata.description).toMatch(/portfolio in progress/i);
-    expect(metadata.description).toMatch(/fictional/i);
+    expect(metadata.description).toMatch(/JadeWords/i);
+    expect(metadata.description).toMatch(/placeholder|concept/i);
     expect(metadata.description).not.toMatch(/engineer|designer|award|client/i);
   });
 
@@ -17,14 +17,20 @@ describe('page metadata', () => {
     expect(metadata.description).toMatch(/biography content is a placeholder/i);
   });
 
-  it('gives each generated case study distinct metadata that labels its fictional content', () => {
+  it('gives each generated project distinct metadata and identifies the fictional concepts', () => {
     const metadata = projects.map(project => getPageMetadata(`/work/${project.id}`));
     expect(new Set(metadata.map(page => page.title)).size).toBe(projects.length);
     expect(new Set(metadata.map(page => page.description)).size).toBe(projects.length);
     projects.forEach((project, index) => {
       expect(metadata[index].title).toContain(project.title);
-      expect(metadata[index].description).toContain(project.title);
-      expect(metadata[index].description).toMatch(/fictional.*placeholder case study/i);
+      if (project.status === 'placeholder') {
+        expect(metadata[index].description).toContain(project.title);
+        expect(metadata[index].description).toMatch(/fictional.*placeholder case study/i);
+      } else {
+        expect(metadata[index].title).not.toMatch(/concept/i);
+        expect(metadata[index].description).toMatch(/Chinese/i);
+        expect(metadata[index].description).not.toMatch(/fictional|placeholder|download now|available now/i);
+      }
     });
   });
 
@@ -45,5 +51,6 @@ describe('page metadata', () => {
   it('resolves trailing slashes and navigation decorations without changing page identity', () => {
     expect(getPageMetadata('/about/?source=nav#intro')).toEqual(getPageMetadata('/about'));
     expect(getPageMetadata('/work/roam/')).toEqual(getPageMetadata('/work/roam'));
+    expect(getPageMetadata('/work/jade-words/')).toEqual(getPageMetadata('/work/jade-words'));
   });
 });
