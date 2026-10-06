@@ -48,6 +48,14 @@ Details is an engineering case study for technical readers. The short overview i
 
 Separate implementation facts from inferred engineering implications. An architecture can imply a trade-off without proving the author's original motivation. Do not invent personal contribution, scale, adoption, performance measurements, production deployment or security guarantees. A checked-in migration establishes intended database behavior; it does not verify a deployed database.
 
+### Public technical copy
+
+Factual correctness is required, but does not make a statement worth showcasing. Center the public narrative on distinctive architecture, concrete cloud/LLM mechanisms and non-trivial implementation choices. Remove evidence-audit caveats, unused components, obvious engineering hygiene and mundane assurances. Do not turn token refresh, ordinary input validation, server-side credentials or the absence of an unused API workspace into achievements. Remove rejected claims outright; do not substitute paraphrases.
+
+Keep source verification and relevant factual boundaries in contributor notes. Public copy should explain the mechanism and its useful trade-off without narrating the evidence audit or inventing the author's motivation. Retain functional distinctions that change behavior, such as untimed new song lyrics versus timestamped line replay, and accurate media descriptions and fictional-concept disclosure.
+
+The final copy review must ask what each sentence helps a technical reader understand. Delete repetition and routine assurances; prioritize geometric stroke validation, transactional progress/awards, bounded Gemini tool planning, provider API roles, and model-output transformation.
+
 ### JadeWords engineering evidence
 
 All paths below are relative to the read-only `language-app` repository, inspected on 2026-10-05.
@@ -67,7 +75,7 @@ All paths below are relative to the read-only `language-app` repository, inspect
 | Player timing | `apps/mobile/src/screens/AIMusicPlayerScreen.tsx:37`, `:70`, `:103`, `:113`, `:140`, `:399` uses expo-audio, pauses on blur, bounds seeks and branches timed replay/ordinary rewind. `utils/lrc.ts:15`, `:47` handles plain lyrics separately and requires finite, nonnegative, increasing timestamps. |
 | Current generation limit | `supabase/functions/_shared/ai-music.ts:733`, `:738`, `:1705`, `:2105` marks new lyrics timing:none, with no acoustic verification or Speech-to-Text alignment. Do not present current generation as synchronized karaoke. |
 
-The local-geometry and direct-Supabase trade-offs shown in Details are explicitly inferred implications. Production provider availability, deployment and live end-to-end generation were not tested.
+The local-geometry trade-off shown in Details is an inferred implementation implication; this distinction belongs in contributor notes, not a public audit label. Production provider availability, deployment and live end-to-end generation were not tested.
 
 ### Dedicated Vocab Songs section
 
@@ -89,6 +97,10 @@ Present Vocab Songs as a technical peer of The build: the same restrained sans-s
 
 The 2026-10-06 read-only source check confirms Gemini planning uses Vertex AI generateContent with service-account OAuth; Lyria uses the Gemini Interactions REST API and server-side API-key authentication. Cloud Translation v3 supplies translations, pinyin-pro@3.28.1 supplies phrase-level pinyin, and expo-audio plays signed Supabase Storage URLs. Supabase Edge Functions use Deno.serve, supabase-js, native fetch and Web Crypto JWT signing. The custom TypeScript tool runner validates an arrangement/vocabulary plan before constructing the audio prompt; client-focused polling advances Edge stages.
 
+The reachable planner also establishes context engineering, beyond prompt composition. buildMusicPromptPlan assembles vocabulary/pinyin/meaning, HSK, style/mood, learner intent and composition/output constraints. runMusicDirectionAgent preloads MUSIC_SKILLS['music-direction'].body, sends creativeInput separately, exposes read_skill/read_style_profile/submit_music_direction, and enables submission after the selected style is read. Tool responses and complete Gemini content parts carry context across up to five turns; validation checks exact vocabulary, Mandarin vocals and verse/chorus structure before the accepted direction augments the base Lyria prompt.
+
+scripts/build-music-skills.mjs compiles SKILL.md sources into the embedded, hashed skills.generated.ts bundle. Runtime skill access returns that bundle; there is no dynamic filesystem fetch or arbitrary skill discovery. Only music-direction is exposed to the model. audio-generation and lyrics-grounding supply host contracts/version receipts rather than separate model-driven skill loading. Planner execution requires its configured Gemini model; fallback remains supported. Sources: _shared/ai-music.ts:512, :572, :593; _shared/music-agent/runner.ts:54, :110, :176, :187, :208; google.ts:30; scripts/build-music-skills.mjs:9. These are internal implementation boundaries, not caveats to repeat in public copy.
+
 Sources: _shared/music-agent/google.ts:16, runner.ts:174, _shared/ai-music.ts:572, :629, :687, :1341, :1590, :2170; ai-music-generate-audio/index.ts:23; ai-music-transcribe-lrc/index.ts:133; AIMusicPlayerScreen.tsx:5. Paths are relative to language-app. No Google SDK, LangChain or Cloud Run is established in this runtime path; historical Speech/GCS helpers are not the current lyrics pipeline. Configuration documentation is not evidence of a live model, deployment or provider success. Do not fabricate those claims.
 
 ## Acceptance checklist
@@ -100,7 +112,7 @@ Before considering a project addition or visual revision complete:
 - Confirm atmosphere spans the viewport, shares the foreground palette/material, remains visible around the product, and survives immersion and natural scrolling without a hard section seam.
 - Confirm the hero is concise, the owned screens stay readable, the project does not become a giant opaque poster, and verified feature coverage is complete below it.
 - Confirm first-load desktop/mobile exposes the rich screen composition and usable screen controls without opening a preview. The standalone core overview video is absent on both collection and direct project routes; “The build” follows with normal section spacing. Songs media starts paused. Confirm the hidden H1 reserves no space, the accepted editorial composition is preserved, the screens use the freed space, engineering content is reachable by scrolling, and no JadeWords expansion/exit or substitute Details action remains. Concept immersion preserves selection and restores entry focus.
-- Confirm Details explains engineering mechanisms and sources, with factual runtime boundaries and explicitly inferred trade-offs. Songs must foreground concrete cloud/model APIs and libraries, custom prompt/tool orchestration and model-output transformation, while retaining the client-driven runtime and untimed lyric boundary.
+- Confirm Details explains engineering mechanisms and sources, with factual runtime boundaries and meaningful trade-offs. Complete the public-copy review above; audit caveats and unused components stay out of the narrative. Songs must foreground concrete cloud/model APIs and libraries, custom prompt/tool orchestration and model-output transformation, while retaining the client-driven runtime and untimed lyric boundary.
 - Check Browse, Immerse, thumbnails and accessible names for redundant authenticity labels. Confirm Vocab Songs has its own supporting section and explicit native playback on collection and direct routes.
 - Exercise repeated and rapid selection, scoped arrow keys, visible focus, Escape/exit, Back/Forward and direct routes. No inactive controls may receive focus.
 - Check reduced motion, missing atmosphere/screens/video, accessible media controls, text contrast and overflow at mobile widths.

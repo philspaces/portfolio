@@ -194,8 +194,8 @@ test('Vocab Songs supports explicit playback, navigation cleanup, reduced motion
   await arrive(page);
   const songs = page.getByRole('region', { name: 'Vocab Songs', exact: true });
   const video = songs.locator('video');
-  await expect(songs.getByRole('heading', { name: /Gemini planning.*Lyria generation/s, exact: true })).toBeAttached();
-  await expect(songs.getByRole('heading', { level: 3 })).toHaveText(['Gemini on Vertex AI', 'Lyria through Gemini Interactions', 'Model output into a learning interface']);
+  await expect(songs.getByRole('heading', { name: /Context engineering.*Lyria generation/s, exact: true })).toBeAttached();
+  await expect(songs.getByRole('heading', { level: 3 })).toHaveText(['Context engineering on Vertex AI', 'Lyria through Gemini Interactions', 'Model output into a learning interface']);
   await expect(page.getByText(/Real app screens|Actual app|Verified project/i)).toHaveCount(0);
   await expect(video).toHaveAttribute('controls', '');
   await expect(video).toHaveAttribute('playsinline', '');
@@ -302,7 +302,7 @@ test('JadeWords overview has clean routing, Back/Forward, and real static HTML w
     await expect(staticPage.locator('.case-header').getByText('Coming soon to iOS & Android', { exact: true })).toBeVisible();
     await expect(staticPage.getByRole('link', { name: 'All projects', exact: true })).toHaveAttribute('href', '/');
     await expect(staticPage.getByRole('heading', { name: /Role & contribution|Impact & evidence/ })).toHaveCount(0);
-    await expect(staticPage.getByRole('heading', { name: 'A direct mobile runtime', exact: true })).toBeVisible();
+    await expect(staticPage.getByRole('heading', { name: 'Validate strokes on the device', exact: true })).toBeVisible();
     await expect(staticPage.getByRole('region', { name: 'Vocab Songs', exact: true })).toBeAttached();
     await expect(staticPage.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex, follow');
   } finally {
