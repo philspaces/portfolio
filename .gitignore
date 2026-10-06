@@ -9,3 +9,4 @@ output/
 *.log
 *.tsbuildinfo
 .DS_Store
+.idea
