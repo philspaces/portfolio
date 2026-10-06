@@ -58,7 +58,6 @@ export interface RealProject extends ProjectBase {
     headline: string;
     boundaries: { title: string; detail: string }[];
     sections: { title: string; detail: string; source: string }[];
-    implications: { title: string; detail: string }[];
   };
   songs: SongsFeature;
   availability: string;
@@ -118,9 +117,6 @@ export const projects: Project[] = [
         { title: 'Resume a vocabulary session', detail: 'Load the active draft, fetch vocabulary by its stored IDs, then restore order, index and answer sets. Changes persist as JSONB. A partial unique index limits active drafts per user, module, content and mode.', source: 'LearningSessionScreen.tsx · learningSessionAPI.ts' },
         { title: 'Validate strokes on the device', detail: 'Stroke paths and medians come from Supabase through a per-character Promise cache. Gestures normalize to a 1024-coordinate SVG space. Each stroke is resampled to 20 points and checked against endpoints, mean distance and length; accepted strokes advance, rejected strokes trigger hints and haptics.', source: 'WritingBoard.tsx · writingAPI.ts' },
         { title: 'Commit completion in PostgreSQL', detail: 'Writing completion invokes record_writing_completion. The RPC locks existing progress, updates attempts and first-completion awards, then returns practice progress and progression in one database mutation.', source: 'writingProgressAPI.ts · record_writing_completion' },
-      ],
-      implications: [
-        { title: 'Immediate, bounded feedback', detail: 'Local geometry gives immediate feedback without a request for every stroke. Deterministic tolerances measure similarity to the reference stroke.' },
       ],
     },
     songs: {

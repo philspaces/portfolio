@@ -44,7 +44,7 @@ CTA: **View Jade Words → https://jadewords.com/**. Keep coming-soon availabili
 
 ## Technical Details audience
 
-Details is an engineering case study for technical readers. The short overview identifies the product; Details explains how it is implemented. Do not repeat consumer benefits, a product-website feature list or a generic stack laundry list. Show runtime boundaries, a representative request/data flow, a difficult feature's mechanism, state and persistence, failure handling, and meaningful trade-offs supported by the code. Keep implementation content in the typed project layer and use readable, restrained source captions.
+Details is an engineering case study for technical readers. The short overview identifies the product; Details explains how it is implemented. Do not repeat consumer benefits, a product-website feature list or a generic stack laundry list. Show runtime boundaries, a representative request/data flow, a difficult feature's mechanism, state and persistence, failure handling, and substantive, evidenced trade-offs when they illuminate a real decision. Keep implementation content in the typed project layer and use readable, restrained source captions.
 
 Separate implementation facts from inferred engineering implications. An architecture can imply a trade-off without proving the author's original motivation. Do not invent personal contribution, scale, adoption, performance measurements, production deployment or security guarantees. A checked-in migration establishes intended database behavior; it does not verify a deployed database.
 
@@ -52,7 +52,9 @@ Separate implementation facts from inferred engineering implications. An archite
 
 Factual correctness is required, but does not make a statement worth showcasing. Center the public narrative on distinctive architecture, concrete cloud/LLM mechanisms and non-trivial implementation choices. Remove evidence-audit caveats, unused components, obvious engineering hygiene and mundane assurances. Do not turn token refresh, ordinary input validation, server-side credentials or the absence of an unused API workspace into achievements. Remove rejected claims outright; do not substitute paraphrases.
 
-Keep source verification and relevant factual boundaries in contributor notes. Public copy should explain the mechanism and its useful trade-off without narrating the evidence audit or inventing the author's motivation. Retain functional distinctions that change behavior, such as untimed new song lyrics versus timestamped line replay, and accurate media descriptions and fictional-concept disclosure.
+Keep source verification and relevant factual boundaries in contributor notes. Public copy should explain the mechanism without narrating the evidence audit or inventing the author's motivation. Retain functional distinctions that change behavior, such as untimed new song lyrics versus timestamped line replay, and accurate media descriptions and fictional-concept disclosure.
+
+Discuss trade-offs only when substantive evidence shows a consequential choice and the explanation illuminates a real decision. Choosing an appropriate tool or implementation is a strength, not a drawback to fill a template. Do not manufacture deficits, speculative motives or standalone caveats. JadeWords has no Trade-offs / Immediate, bounded feedback block; geometric stroke matching remains described once in its existing implementation narrative.
 
 The final copy review must ask what each sentence helps a technical reader understand. Delete repetition and routine assurances; prioritize geometric stroke validation, transactional progress/awards, bounded Gemini tool planning, provider API roles, and model-output transformation.
 
@@ -75,7 +77,7 @@ All paths below are relative to the read-only `language-app` repository, inspect
 | Player timing | `apps/mobile/src/screens/AIMusicPlayerScreen.tsx:37`, `:70`, `:103`, `:113`, `:140`, `:399` uses expo-audio, pauses on blur, bounds seeks and branches timed replay/ordinary rewind. `utils/lrc.ts:15`, `:47` handles plain lyrics separately and requires finite, nonnegative, increasing timestamps. |
 | Current generation limit | `supabase/functions/_shared/ai-music.ts:733`, `:738`, `:1705`, `:2105` marks new lyrics timing:none, with no acoustic verification or Speech-to-Text alignment. Do not present current generation as synchronized karaoke. |
 
-The local-geometry trade-off shown in Details is an inferred implementation implication; this distinction belongs in contributor notes, not a public audit label. Production provider availability, deployment and live end-to-end generation were not tested.
+Production provider availability, deployment and live end-to-end generation were not tested.
 
 ### Dedicated Vocab Songs section
 
@@ -112,7 +114,7 @@ Before considering a project addition or visual revision complete:
 - Confirm atmosphere spans the viewport, shares the foreground palette/material, remains visible around the product, and survives immersion and natural scrolling without a hard section seam.
 - Confirm the hero is concise, the owned screens stay readable, the project does not become a giant opaque poster, and verified feature coverage is complete below it.
 - Confirm first-load desktop/mobile exposes the rich screen composition and usable screen controls without opening a preview. The standalone core overview video is absent on both collection and direct project routes; “The build” follows with normal section spacing. Songs media starts paused. Confirm the hidden H1 reserves no space, the accepted editorial composition is preserved, the screens use the freed space, engineering content is reachable by scrolling, and no JadeWords expansion/exit or substitute Details action remains. Concept immersion preserves selection and restores entry focus.
-- Confirm Details explains engineering mechanisms and sources, with factual runtime boundaries and meaningful trade-offs. Complete the public-copy review above; audit caveats and unused components stay out of the narrative. Songs must foreground concrete cloud/model APIs and libraries, custom prompt/tool orchestration and model-output transformation, while retaining the client-driven runtime and untimed lyric boundary.
+- Confirm Details explains engineering mechanisms and sources, with factual runtime boundaries; include trade-offs only when substantive evidence illuminates a real decision. Complete the public-copy review above; audit caveats and unused components stay out of the narrative. Songs must foreground concrete cloud/model APIs and libraries, custom prompt/tool orchestration and model-output transformation, while retaining the client-driven runtime and untimed lyric boundary.
 - Check Browse, Immerse, thumbnails and accessible names for redundant authenticity labels. Confirm Vocab Songs has its own supporting section and explicit native playback on collection and direct routes.
 - Exercise repeated and rapid selection, scoped arrow keys, visible focus, Escape/exit, Back/Forward and direct routes. No inactive controls may receive focus.
 - Check reduced motion, missing atmosphere/screens/video, accessible media controls, text contrast and overflow at mobile widths.

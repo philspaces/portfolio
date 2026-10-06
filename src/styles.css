@@ -120,9 +120,6 @@ main:focus, h1:focus { outline: none; }
 .engineering-details article:first-child { padding-top: 0; }
 .engineering-details article h3 { margin-bottom: 12px; }
 .engineering-source { display: block; margin-top: 16px; font-family: 'Geist Mono Variable', monospace; font-size: 9px; color: #a8bda8; line-height: 1.65; overflow-wrap: anywhere; }
-.engineering-implications { margin-top: 32px; }
-.engineering-implications h4 { font-size: 13px; font-weight: 500; margin-bottom: 8px; }
-.engineering-implications > div + div { margin-top: 22px; }
 .details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(50px, 9vw, 145px); align-items: start; }
 .architecture-visual { position: sticky; top: 36px; background: #202124; border: 1px solid var(--line); border-radius: var(--radius); padding: 26px; }
 .architecture-caption { color: #c1c2c6; display: flex; align-items: center; justify-content: space-between; font-size: 11px; }
