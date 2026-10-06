@@ -7,7 +7,6 @@ import { Backdrop } from './Backdrop';
 import { Demo } from './Demo';
 import { JadeShowcase } from './JadeShowcase';
 import { VocabSongs } from './VocabSongs';
-import { ProjectFilm } from './ProjectFilm';
 import { useIdleChrome } from './useIdleChrome';
 import { useMotionPreference } from './useMotionPreference';
 import { getProject, projects } from './projects';
@@ -37,9 +36,9 @@ function useRoute(initialRoute?: string) {
   return route;
 }
 
-function ProjectVisual({ project, interactive = false, compact = false, immersed = false }: { project: Project; interactive?: boolean; compact?: boolean; immersed?: boolean }) {
+function ProjectVisual({ project, interactive = false, compact = false }: { project: Project; interactive?: boolean; compact?: boolean }) {
   return project.kind === 'jade'
-    ? <JadeShowcase project={project} interactive={interactive} compact={compact} immersed={immersed} />
+    ? <JadeShowcase project={project} interactive={interactive} compact={compact} />
     : <Demo kind={project.kind} interactive={interactive} compact={compact} />;
 }
 
@@ -50,13 +49,13 @@ function WebsiteLink({ project, className }: { project: RealProject; className: 
   </a>;
 }
 
-function Scene({ project, interactive, immersed }: { project: Project; interactive: boolean; immersed: boolean }) {
+function Scene({ project, interactive }: { project: Project; interactive: boolean }) {
   const present = useIsPresent();
   const reducedMotion = useMotionPreference();
   return <m.div className="stage-scene" aria-hidden={!present} inert={!present || !interactive}
     initial={{ opacity: 0, y: reducedMotion ? 0 : 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
     transition={{ duration: reducedMotion ? 0 : 0.55, ease: [0.22, 1, 0.36, 1] }}>
-    <ProjectVisual project={project} interactive={interactive && present} immersed={immersed} />
+    <ProjectVisual project={project} interactive={interactive && present} />
   </m.div>;
 }
 
@@ -103,23 +102,24 @@ function Stage({ project, caseStudy = false, immersed, setImmersed }: {
   return (
     <section ref={stageRef} className={`showcase-stage${immersed ? ' is-immersed' : ''}${quiet ? ' chrome-quiet' : ''}`} data-chrome={quiet ? 'quiet' : 'visible'} aria-label={`${project.title} project showcase`}>
       {immersed && <div className="immerse-toolbar">
-        <span className="immerse-label">{project.title} <span>/</span> {project.status === 'real' ? 'Project preview' : 'Fictional concept'}</span>
+        <span className="immerse-label">{project.title} <span>/</span> Fictional concept</span>
         <button ref={exitRef} className="exit-button" onClick={exit}>Exit demo <XIcon size={17} /></button>
       </div>}
       <div className={`stage-visual stage-${project.kind}`}>
         <AnimatePresence initial={false}>
-          <Scene key={project.id} project={project} interactive={immersed || project.kind === 'jade'} immersed={immersed} />
+          <Scene key={project.id} project={project} interactive={immersed || project.kind === 'jade'} />
         </AnimatePresence>
       </div>
       <div className={`stage-info${!immersed && !caseStudy ? ' is-summary' : ''}`}>
         <div className="stage-copy">
           <span className="project-category">{project.number} <span>/</span> {project.category}</span>
-          {(immersed || caseStudy) && <><h2>{project.title}<span className="title-period">.</span></h2><p>{project.oneLiner}</p></>}
+          {(immersed || caseStudy) && <h2>{project.title}<span className="title-period">.</span></h2>}
+          <p>{project.oneLiner}</p>
           {!immersed && <div className="project-tags">{project.tags.map(tag => <span key={tag}>{tag}</span>)}</div>}
         </div>
         <div className="stage-actions">
           {project.status === 'real' && <WebsiteLink project={project} className="button-primary" />}
-          <button ref={exploreRef} hidden={immersed} className={project.status === 'real' ? 'button-text preview-button' : 'button-primary'} onClick={explore} aria-expanded={immersed}>{project.status === 'real' ? 'Expand showcase' : 'Explore demo'}</button>
+          {project.status === 'placeholder' && <button ref={exploreRef} hidden={immersed} className="button-primary" onClick={explore} aria-expanded={immersed}>Explore demo</button>}
           {project.status === 'placeholder' && !caseStudy && <a className="button-text" href={routeHref(`/work/${project.id}`)}>Read case study</a>}
         </div>
       </div>
@@ -154,7 +154,7 @@ function ProjectSelector({ selected, select }: { selected: string; select: (id: 
 }
 
 function RealProjectDetails({ project, immersed }: { project: RealProject; immersed: boolean }) {
-  return <><section className="jade-overview-film" aria-label="JadeWords screen overview"><ProjectFilm media={project.overviewMedia} immersed={immersed} unavailableMessage="App preview unavailable." /></section><section className="details-section real-project-details" aria-labelledby="details-heading">
+  return <><section className="details-section real-project-details" aria-labelledby="details-heading">
     <div className="details-heading"><h2 id="details-heading">The build<span>.</span></h2><p>{project.engineering.introduction}</p></div>
     <div className="real-details-grid">
       <aside className="real-build-note"><span className="build-kicker">Mobile / runtime architecture</span><h3>{project.engineering.headline}</h3><ul className="stack-list" aria-label="Technology stack">{project.stack.map(item => <li key={item}>{item}</li>)}</ul><ol className="runtime-boundaries" aria-label="Runtime boundaries">{project.engineering.boundaries.map(boundary => <li key={boundary.title}><strong>{boundary.title}</strong><span>{boundary.detail}</span></li>)}</ol><p>{project.architectureNote}</p></aside>
@@ -254,7 +254,7 @@ export default function App({ initialRoute }: { initialRoute?: string } = {}) {
     </header>
     <main ref={mainRef} id="main-content" tabIndex={-1}>
       {browse ? <>
-        <div className="project-heading"><h1 tabIndex={-1}>{activeProject.status === 'real' ? <a href={routeHref(`/work/${activeProject.id}`)}>{activeProject.title}</a> : activeProject.title}<span>.</span></h1><p>{activeProject.oneLiner}</p></div>
+        <h1 className="sr-only" tabIndex={-1}>{activeProject.title}</h1>
         <div id="project-panel" role="tabpanel" aria-labelledby={`tab-${selected}`}>
           <Stage project={activeProject} immersed={immersed} setImmersed={setImmersed} />
         </div>

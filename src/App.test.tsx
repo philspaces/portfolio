@@ -110,7 +110,7 @@ describe('The Living Showcase', () => {
     expect(tab('JadeWords')).toHaveAttribute('aria-selected', 'true');
   });
 
-  it('exposes JadeWords screens immediately with a safe website link and optional expansion', async () => {
+  it('exposes JadeWords screens immediately without an expansion or replacement action', async () => {
     const user = userEvent.setup();
     render(<App />);
     expect(tab('JadeWords')).toHaveAttribute('aria-selected', 'true');
@@ -132,13 +132,19 @@ describe('The Living Showcase', () => {
     expect(screen.getByRole('button', { name: 'Writing' })).toHaveFocus();
     await user.keyboard('{End}');
     expect(songs).toHaveFocus();
-    const preview = screen.getByRole('button', { name: /expand showcase/i });
-    await user.click(preview);
-    expect(screen.getByRole('button', { name: /exit demo/i })).toHaveFocus();
+    expect(screen.queryByRole('button', { name: /expand showcase|exit demo/i })).not.toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 1, name: 'JadeWords' })).toHaveClass('sr-only');
     await user.keyboard('{Escape}');
-    await waitFor(() => expect(preview).toHaveFocus());
+    expect(songs).toHaveFocus();
     expect(songs).toHaveAttribute('aria-pressed', 'true');
     expect(tab('JadeWords')).toHaveAttribute('aria-selected', 'true');
+    expect(screen.queryByRole('link', { name: 'Details' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('region', { name: 'JadeWords screen overview' })).not.toBeInTheDocument();
+    expect(document.querySelector('.collection-note + .real-project-details')).toBeInTheDocument();
+    expect(document.querySelector('.stage-actions')?.children).toHaveLength(1);
+    arriveAt('/work/jade-words/');
+    expect(window.location.pathname).toBe('/work/jade-words/');
+    expect(screen.getByRole('heading', { level: 1, name: /JadeWords/ })).toHaveFocus();
   });
 
   it('keeps one selection through repeated and rapid project changes without scrolling', async () => {

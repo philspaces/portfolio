@@ -2,24 +2,28 @@
   padding: 0 max(48px, calc((100% - 1440px) / 2)) 110px;
   background: linear-gradient(180deg, rgb(9 22 16 / .95), rgb(9 22 16 / .72));
 }
-.songs-editorial { display: grid; grid-template-columns: 1fr 1.15fr; gap: clamp(50px, 8vw, 120px); border-top: 1px solid rgb(176 195 176 / .22); padding-top: 52px; }
+.songs-editorial { display: grid; grid-template-columns: 1fr 1.5fr; gap: 70px; align-items: start; border-top: 1px solid rgb(176 195 176 / .22); padding-top: 52px; }
+.songs-copy { position: sticky; top: 36px; }
+.songs-copy .stack-list { margin-block: 28px; }
 .songs-kicker { font-family: 'Geist Mono Variable', monospace; font-size: 11px; color: #b8cdb3; }
-.songs-copy h2 { white-space: pre-line; margin-top: 22px; font-family: Georgia, 'Times New Roman', serif; font-size: clamp(42px, 5vw, 68px); font-weight: 400; line-height: 1.02; letter-spacing: -2px; color: #f5f1e7; }
-.songs-copy p { max-width: 41ch; margin-top: 25px; color: #b8c2b8; font-size: 13px; line-height: 1.75; }
+.songs-copy h2 { white-space: pre-line; margin-top: 26px; font-size: clamp(28px, 3vw, 40px); font-weight: 450; line-height: 1.12; letter-spacing: -1.3px; color: #f5f1e7; }
+.songs-copy p { max-width: 60ch; color: #b0b3bd; font-size: 13px; line-height: 1.75; }
 .songs-flow { list-style: none; margin: 0; padding: 0; }
-.songs-flow li { display: grid; grid-template-columns: 24px 1fr; gap: 22px; padding: 20px 0 22px; border-bottom: 1px solid rgb(176 195 176 / .22); }
+.songs-flow li { display: grid; grid-template-columns: 24px 1fr; gap: 18px; padding: 30px 0; border-bottom: 1px solid rgb(176 195 176 / .22); }
 .songs-flow li:first-child { padding-top: 0; }
 .songs-step-number { padding-top: 5px; font-family: 'Geist Mono Variable', monospace; font-size: 10px; color: #adc4b1; }
 .songs-flow h3 { font-size: 18px; font-weight: 450; letter-spacing: -.3px; }
-.songs-flow p { max-width: 50ch; margin-top: 9px; font-size: 12px; line-height: 1.7; color: #b8c2b8; }
+.songs-flow p { max-width: 60ch; margin-top: 12px; font-size: 13px; line-height: 1.75; color: #b0b3bd; }
 @media (max-width: 1100px) {
   .vocab-songs { padding-inline: 28px; }
 }
 @media (max-width: 767px) {
   .vocab-songs { padding: 0 18px 70px; }
   .songs-editorial { grid-template-columns: 1fr; gap: 30px; padding-top: 36px; }
-  .songs-copy h2 { font-size: 44px; margin-top: 18px; letter-spacing: -1.3px; }
-  .songs-copy p { margin-top: 20px; font-size: 12px; }
-  .songs-flow li { gap: 12px; padding-block: 18px; }
+  .songs-copy { position: static; }
+  .songs-copy h2 { font-size: 31px; }
+  .songs-copy p { font-size: 12px; }
+  .songs-flow p { font-size: 12px; }
+  .songs-flow li { gap: 12px; padding-block: 25px; }
   .songs-flow h3 { font-size: 17px; }
 }

@@ -39,7 +39,9 @@ export interface SongsFeature {
   title: string;
   headline: string;
   introduction: string;
-  steps: { title: string; detail: string }[];
+  stack: string[];
+  boundaries: { title: string; detail: string }[];
+  steps: { title: string; detail: string; source: string }[];
   media: ProjectMedia;
 }
 
@@ -125,12 +127,19 @@ export const projects: Project[] = [
     },
     songs: {
       title: 'Vocab Songs',
-      headline: 'Generation.\nThen playback.',
-      introduction: 'Words and a sound preset enter a staged generation flow. Persisted track state connects authenticated requests, stored audio and the mobile player.',
+      headline: 'Gemini planning.\nLyria generation.',
+      introduction: 'Supabase Edge Functions coordinate Google Cloud model APIs through custom TypeScript. The Expo client advances the stages; provider credentials and prompt construction stay server-side.',
+      stack: ['TypeScript', 'Deno', 'Supabase Edge Functions', 'Vertex AI', 'Gemini API', 'expo-audio'],
+      boundaries: [
+        { title: 'Vertex AI · Gemini', detail: 'Tool calling → validated arrangement and vocabulary plan' },
+        { title: 'Gemini Interactions · Lyria', detail: 'Music prompt → audio and model-generated lyric text' },
+        { title: 'Cloud Translation · pinyin-pro', detail: 'Mandarin lines → translations and pronunciation' },
+        { title: 'Expo · expo-audio', detail: 'Signed Supabase Storage URL → native playback' },
+      ],
       steps: [
-        { title: 'Request boundary', detail: 'A typed Expo request sends selected words and preset style/mood to authenticated Edge Functions. A bounded Gemini planner can fall back to the base prompt; the Lyria audio call stays server-side.' },
-        { title: 'Persisted stages', detail: 'Focus-scoped client polling advances queued → generating_audio → audio_ready → lyric preparation → ready. Ownership and status predicates guard transitions. A failed lyric step retries against saved audio instead of regenerating it.' },
-        { title: 'Playback & lyric timing', detail: 'Private Storage supplies signed audio URLs to expo-audio. The player handles plain lyrics and timestamped LRC separately. New generation is untimed; line seeking is enabled only for tracks with valid timestamps.' },
+        { title: 'Gemini on Vertex AI', detail: 'A custom TypeScript tool runner sends vocabulary, HSK level and sound-preset context to Vertex AI. Gemini function calling produces a validated arrangement and vocabulary plan, which augments the Lyria prompt. Native fetch and service-account OAuth connect the Edge runtime to Google Cloud; a five-turn planning budget has a base-plan fallback.', source: 'music-agent/google.ts · music-agent/runner.ts · _shared/ai-music.ts' },
+        { title: 'Lyria through Gemini Interactions', detail: 'A Deno Edge Function calls the Gemini Interactions REST API with Lyria and server-side API-key authentication. One response supplies generated audio and lyric text; the audio is decoded into private Supabase Storage. The Expo client advances generation stages through focused polling.', source: 'ai-music-generate-audio/index.ts · _shared/ai-music.ts · AIMusicGeneratingScreen.tsx' },
+        { title: 'Model output into a learning interface', detail: 'A dedicated parser extracts Mandarin lines from Lyria’s output. pinyin-pro builds phrase-level pinyin with polyphone overrides; Cloud Translation v3 supplies meanings in the same line order. Signed Storage URLs feed expo-audio. New generation is untimed; line seeking remains conditional on valid timestamps.', source: 'music-agent/lyria-lyrics.ts · _shared/ai-music.ts · AIMusicPlayerScreen.tsx' },
       ],
       media: {
         video: 'jade-words/media/songs.mp4',

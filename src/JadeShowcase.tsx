@@ -5,7 +5,7 @@ import { ProjectFilm } from './ProjectFilm'
 import type { RealProject } from './projects'
 import './jade-showcase.css'
 
-type JadeShowcaseProps = { project: RealProject; interactive?: boolean; compact?: boolean; immersed?: boolean }
+type JadeShowcaseProps = { project: RealProject; interactive?: boolean; compact?: boolean }
 const asset = (path: string) => `${import.meta.env.BASE_URL}jade-words/${path}`
 
 function AppScreen({ file, label, decorative = false }: { file: string; label: string; decorative?: boolean }) {
@@ -34,7 +34,7 @@ function BrandMark() {
   return <div className="jade-brand">{!unavailable && <img ref={imageRef} src={asset('icon.png')} alt="" width="48" height="48" onError={() => setUnavailable(true)} />}<span>JadeWords</span></div>
 }
 
-function JadeComposition({ project, interactive, immersed }: { project: RealProject; interactive: boolean; immersed: boolean }) {
+function JadeComposition({ project, interactive }: { project: RealProject; interactive: boolean }) {
   const screens = project.screenPreviews
   const previews = [...screens, { id: 'songs', label: 'Songs', accent: 'jade', number: '04' }]
   const [selected, setSelected] = useState(screens[0].id)
@@ -63,7 +63,7 @@ function JadeComposition({ project, interactive, immersed }: { project: RealProj
       </div>
 
         <div className={`jade-primary-screen${songsSelected ? ' jade-primary-screen--film' : ''}`} id={viewerId} aria-label={`${current.label} preview`}>
-          {songsSelected ? <div className="jade-songs-preview"><ProjectFilm media={project.songs.media} immersed={immersed} unavailableMessage="Vocab Songs preview unavailable." /></div> : <div className="jade-device">{screens.map((screen) => <div key={screen.id} className={`jade-screen-layer${screen.id === selected ? ' is-current' : ''}`} aria-hidden={screen.id !== selected}><AppScreen file={screen.file} label={screen.label} decorative={!interactive || screen.id !== selected} /></div>)}</div>}
+          {songsSelected ? <div className="jade-songs-preview"><ProjectFilm media={project.songs.media} immersed={false} unavailableMessage="Vocab Songs preview unavailable." /></div> : <div className="jade-device">{screens.map((screen) => <div key={screen.id} className={`jade-screen-layer${screen.id === selected ? ' is-current' : ''}`} aria-hidden={screen.id !== selected}><AppScreen file={screen.file} label={screen.label} decorative={!interactive || screen.id !== selected} /></div>)}</div>}
           <div className="jade-screen-caption" aria-live={interactive ? 'polite' : undefined}><span className={`jade-dot jade-dot--${current.accent}`} />{current.number} <span>/</span> {current.label}</div>
         </div>
         {!songsSelected && <div className="jade-secondary-screens" aria-hidden="true"><div className="jade-secondary-screen jade-secondary-screen--grammar"><AppScreen file="grammar.webp" label="Grammar" decorative /></div><div className="jade-secondary-screen jade-secondary-screen--writing"><AppScreen file="writing.webp" label="Writing" decorative /></div></div>}
@@ -75,7 +75,7 @@ function JadeComposition({ project, interactive, immersed }: { project: RealProj
   </div>
 }
 
-export function JadeShowcase({ project, interactive = false, compact = false, immersed = false }: JadeShowcaseProps) {
+export function JadeShowcase({ project, interactive = false, compact = false }: JadeShowcaseProps) {
   if (compact) return <div className="jade-mini" role="img" aria-label="JadeWords vocabulary preview"><div className="jade-mini-wordmark" aria-hidden="true">JadeWords<span>中文</span></div><div className="jade-mini-screen" aria-hidden="true"><AppScreen file="word.webp" label="Vocabulary" decorative /></div></div>
-  return <JadeComposition key={interactive ? 'interactive' : 'static'} project={project} interactive={interactive} immersed={immersed} />
+  return <JadeComposition key={interactive ? 'interactive' : 'static'} project={project} interactive={interactive} />
 }

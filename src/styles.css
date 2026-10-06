@@ -13,7 +13,7 @@
   --radius: 4px;
 }
 * { box-sizing: border-box; }
-body { margin: 0; min-width: 320px; }
+body { margin: 0; min-width: min(320px, 100%); }
 [hidden] { display: none !important; }
 .portfolio { position: relative; isolation: isolate; min-height: 100dvh; }
 .portfolio > .site-header, .portfolio > main, .portfolio > .site-footer { position: relative; z-index: 1; }
@@ -27,7 +27,7 @@ button, a { touch-action: manipulation; }
 :focus-visible { outline: 2px solid #8c9fff; outline-offset: 5px; }
 ::selection { background: var(--accent); color: white; }
 h1, h2, h3, h4, p { margin: 0; }
-.site-header, .site-footer, .project-heading, .project-strip, .collection-note, .case-header, .case-heading, .case-next, .about-page, .not-found { width: min(1440px, calc(100% - 96px)); margin-inline: auto; }
+.site-header, .site-footer, .project-strip, .collection-note, .case-header, .case-heading, .case-next, .about-page, .not-found { width: min(1440px, calc(100% - 96px)); margin-inline: auto; }
 main { width: 100%; }
 .site-header { display: flex; justify-content: space-between; align-items: center; height: 80px; border-bottom: 1px solid var(--line); }
 .wordmark { font-size: 17px; font-weight: 520; letter-spacing: -0.55px; display: flex; align-items: center; gap: 14px; }
@@ -42,12 +42,9 @@ main { width: 100%; }
 .skip-link:focus { transform: translateY(0); }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
 main:focus, h1:focus { outline: none; }
-.project-heading { padding: 33px 0 16px; }
-.project-heading h1 { font-size: clamp(32px, 3.6vw, 53px); letter-spacing: -2.3px; font-weight: 450; line-height: 1.1; }
-.project-heading h1 span, .details-heading h2 span, .about-page h1 span, .resume-dialog h2 span { color: #607aff; }
-.project-heading p { font-size: 13px; line-height: 1.6; color: #c0c5cf; max-width: 66ch; margin-top: 12px; }
+.details-heading h2 span, .about-page h1 span, .resume-dialog h2 span { color: #607aff; }
 .showcase-stage { position: relative; height: clamp(570px, 72dvh, 810px); display: flex; flex-direction: column; background: transparent; border: 0; border-radius: 0; overflow: hidden; scroll-margin-top: 0; transition: height .55s cubic-bezier(.22,1,.36,1); }
-.portfolio[data-project='jade-words'] .showcase-stage:not(.is-immersed) { height: clamp(700px, 80dvh, 900px); }
+.portfolio[data-project='jade-words'] .showcase-stage { height: clamp(720px, calc(100dvh - 80px), 1000px); }
 .stage-visual { flex: 1; position: relative; min-height: 0; overflow: hidden; }
 .stage-scene { position: absolute; inset: 0; }
 .stage-scene[aria-hidden='true'] { pointer-events: none; }
@@ -67,7 +64,6 @@ main:focus, h1:focus { outline: none; }
 .button-primary:active, .exit-button:active { transform: translateY(1px); }
 .button-text { padding: 10px 0 7px; color: #e5e5e7; border-bottom: 1px solid #8a919f; }
 .button-text:hover { color: white; border-color: white; }
-.preview-button { background: transparent; border: 0; border-bottom: 1px solid #8a919f; border-radius: 0; }
 .is-immersed { height: 100dvh; min-height: 700px; }
 .is-immersed .stage-visual { position: absolute; inset: 0; }
 .is-immersed .stage-info { position: absolute; left: 50%; transform: translateX(-50%); bottom: 30px; min-height: 0; padding: 0; transition: opacity .35s ease; }
@@ -184,9 +180,8 @@ main:focus, h1:focus { outline: none; }
 .resume-dialog > p { color: #b0b4c1; font-size: 13px; line-height: 1.7; margin-top: 23px; }
 .resume-dialog > .button-primary { display: flex; margin-top: 32px; }
 
-@media (min-width: 1800px) { .project-heading { padding-top: 45px; padding-bottom: 28px; } }
 @media (max-width: 1100px) {
-  .site-header, .site-footer, .project-heading, .project-strip, .collection-note, .case-header, .case-heading, .case-next, .about-page, .not-found, .stage-info { width: calc(100% - 56px); }
+  .site-header, .site-footer, .project-strip, .collection-note, .case-header, .case-heading, .case-next, .about-page, .not-found, .stage-info { width: calc(100% - 56px); }
   .details-section { padding-inline: 28px; }
   .stage-actions { gap: 18px; }
   .stage-info { padding-inline: 0; }
@@ -199,15 +194,12 @@ main:focus, h1:focus { outline: none; }
   .immerse-toolbar { left: 28px; right: 28px; }
 }
 @media (max-width: 767px) {
-  .site-header, .site-footer, .project-heading, .project-strip, .collection-note, .case-header, .case-heading, .case-next, .about-page, .not-found, .stage-info { width: calc(100% - 36px); }
+  .site-header, .site-footer, .project-strip, .collection-note, .case-header, .case-heading, .case-next, .about-page, .not-found, .stage-info { width: calc(100% - 36px); }
   .site-header { height: 70px; }
   .wordmark { font-size: 13px; gap: 9px; letter-spacing: -.3px; }
   .wordmark-mark { width: 17px; height: 17px; font-size: 10px; }
   .site-header nav { gap: 17px; font-size: 11px; }
   .site-header nav a[aria-current='page']::after { bottom: -20px; }
-  .project-heading { padding: 26px 0 16px; }
-  .project-heading h1 { font-size: 35px; letter-spacing: -1.5px; }
-  .project-heading p { margin-top: 11px; font-size: 12px; max-width: 100%; }
   .showcase-stage { height: 590px; }
   .stage-info { display: block; padding: 18px 0; min-height: 207px; }
   .stage-info.is-summary { min-height: 125px; }
@@ -234,7 +226,7 @@ main:focus, h1:focus { outline: none; }
   .real-details-grid { grid-template-columns: 1fr; gap: 30px; }
   .real-build-note { position: static; }
   .real-build-note h3 { font-size: 31px; }
-  .portfolio[data-project='jade-words'] .showcase-stage:not(.is-immersed) { height: 676px; }
+  .portfolio[data-project='jade-words'] .showcase-stage { height: clamp(680px, calc(100dvh - 70px), 810px); }
   .engineering-details article { gap: 12px; padding-block: 25px; }
   .architecture-visual { position: static; padding: 23px; }
   .architecture-path { margin: 35px 0; }
@@ -254,7 +246,6 @@ main:focus, h1:focus { outline: none; }
   .is-immersed .stage-copy h2 { font-size: 32px; }
   .is-immersed .stage-copy p { font-size: 11px; }
   .is-immersed .stage-actions { margin-top: 10px; }
-  .portfolio[data-project='jade-words'] .is-immersed .stage-info { display: none; }
   .case-header { padding-top: 23px; }
   .case-header > span { font-size: 8px; max-width: 135px; text-align: right; line-height: 1.6; }
   .case-heading { font-size: 38px; gap: 16px; margin-top: 6px; }
@@ -273,7 +264,6 @@ main:focus, h1:focus { outline: none; }
 @media (max-width: 370px) {
   .site-header nav { gap: 11px; }
   .wordmark-mark { display: none; }
-  .project-heading h1 { font-size: 31px; }
   .stage-info { padding-inline: 0; }
   .stage-actions { gap: 14px; }
 }
