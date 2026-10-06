@@ -2,6 +2,8 @@
 
 This is the visual and editorial authority for the portfolio. Use the [portfolio agent playbook](PORTFOLIO_AGENT.md) for source inspection, writing, implementation seams and the execution checklist. The approved JadeWords baseline is `48030c3` (2026-10-06); the requirements below describe that accepted result, superseding earlier experiments and large Work-header guidance. Update this context when a new direction is explicitly approved.
 
+Project ownership is described in the [playbook code map](PORTFOLIO_AGENT.md#4-use-the-actual-repository-extension-seams): typed project modules register through `src/projects.ts`, shared stage/media/engineering components remain separate, and explicit presentation cases connect them. Structural changes must preserve the accepted rendered result; moving a file is not permission to redesign its content.
+
 ## Intent and reference
 
 Long Phi Nguyen's portfolio combines Swiss editorial typography and recruiter clarity with a cinematic, visual-first project collection. Charcoal, off-white and restrained cobalt belong to the portfolio chrome. Each project contributes its own material, color and atmosphere.
