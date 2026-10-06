@@ -1,5 +1,5 @@
-import { ProjectFilm } from './ProjectFilm';
-import type { SongsFeature } from './projects';
+import { ProjectFilm } from '../../components/ProjectFilm';
+import type { SongsFeature } from './types';
 import './vocab-songs.css';
 
 export function VocabSongs({ feature, immersed }: { feature: SongsFeature; immersed: boolean }) {

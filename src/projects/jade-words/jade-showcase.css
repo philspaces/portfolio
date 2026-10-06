@@ -1,3 +1,7 @@
+.portfolio[data-project='jade-words'] .showcase-stage { height: clamp(720px, calc(100dvh - 80px), 1000px); }
+.portfolio[data-project='jade-words'] .project-tab:not(.is-selected) .tab-number { color: #9a9ca5; }
+.portfolio[data-project='jade-words'] .real-project-details { background: linear-gradient(180deg, transparent, rgb(9 22 16 / .91) 180px, rgb(9 22 16 / .95)); }
+
 .jade-showcase {
   --jade-paper: #fff9ef;
   --jade-ink: #f5f1e7;
@@ -90,4 +94,8 @@
 @media (prefers-reduced-motion: reduce) {
   .jade-screen-layer { transition: none; }
   .jade-songs-preview { animation: none; }
+}
+
+@media (max-width: 767px) {
+  .portfolio[data-project='jade-words'] .showcase-stage { height: clamp(680px, calc(100dvh - 70px), 810px); }
 }

@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { ImageSquareIcon } from '@phosphor-icons/react';
-import type { ProjectMedia } from './projects';
+import type { ProjectMedia } from '../projects/types';
 import './project-film.css';
 
 export function ProjectFilm({ media, immersed, unavailableMessage }: { media: ProjectMedia; immersed: boolean; unavailableMessage: string }) {

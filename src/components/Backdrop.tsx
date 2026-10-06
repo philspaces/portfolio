@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import type { SyntheticEvent } from 'react';
-import { projects } from './projects';
-import type { Project } from './projects';
+import { projects } from '../projects';
+import type { Project } from '../projects';
 import './backdrop.css';
 
 /** Every project layer stays mounted for interruptible crossfades. */

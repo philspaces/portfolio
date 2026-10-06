@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { getPageMetadata } from './metadata';
-import { projects } from './projects';
+import { projects } from '../projects';
 
 describe('page metadata', () => {
   it('identifies the portfolio without inventing a professional role', () => {

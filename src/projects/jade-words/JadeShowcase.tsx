@@ -1,11 +1,11 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import type { KeyboardEvent } from 'react'
 import { ImageSquareIcon } from '@phosphor-icons/react'
-import { ProjectFilm } from './ProjectFilm'
-import type { RealProject } from './projects'
+import { ProjectFilm } from '../../components/ProjectFilm'
+import type { JadeWordsProject } from './types'
 import './jade-showcase.css'
 
-type JadeShowcaseProps = { project: RealProject; interactive?: boolean; compact?: boolean }
+type JadeShowcaseProps = { project: JadeWordsProject; interactive?: boolean; compact?: boolean }
 const asset = (path: string) => `${import.meta.env.BASE_URL}jade-words/${path}`
 
 function AppScreen({ file, label, decorative = false }: { file: string; label: string; decorative?: boolean }) {
@@ -22,7 +22,7 @@ function AppScreen({ file, label, decorative = false }: { file: string; label: s
   return <img ref={imageRef} src={asset(`screens/${file}`)} alt={decorative ? '' : `JadeWords ${label.toLowerCase()} app screen`} width="600" height="1304" decoding="async" onError={() => setUnavailable(true)} />
 }
 
-function BrandMark() {
+function BrandMark({ project }: { project: JadeWordsProject }) {
   const imageRef = useRef<HTMLImageElement>(null)
   const [unavailable, setUnavailable] = useState(false)
   useEffect(() => {
@@ -31,10 +31,10 @@ function BrandMark() {
     })
     return () => cancelAnimationFrame(frame)
   }, [])
-  return <div className="jade-brand">{!unavailable && <img ref={imageRef} src={asset('icon.png')} alt="" width="48" height="48" onError={() => setUnavailable(true)} />}<span>JadeWords</span></div>
+  return <div className="jade-brand">{!unavailable && <img ref={imageRef} src={asset('icon.png')} alt="" width="48" height="48" onError={() => setUnavailable(true)} />}<span>{project.title}</span></div>
 }
 
-function JadeComposition({ project, interactive }: { project: RealProject; interactive: boolean }) {
+function JadeComposition({ project, interactive }: { project: JadeWordsProject; interactive: boolean }) {
   const screens = project.screenPreviews
   const previews = [...screens, { id: 'songs', label: 'Songs', accent: 'jade', number: '04' }]
   const [selected, setSelected] = useState(screens[0].id)
@@ -58,8 +58,8 @@ function JadeComposition({ project, interactive }: { project: RealProject; inter
   return <div className={`jade-showcase${interactive ? ' jade-showcase--interactive' : ''}`} role={interactive ? 'region' : 'img'} aria-label={interactive ? 'JadeWords screen viewer' : 'JadeWords Chinese learning app: vocabulary, grammar, writing and Songs preview'}>
     <div className={`jade-board${songsSelected ? ' jade-board--songs' : ''}`}>
       <div className="jade-editorial" aria-hidden={!interactive}>
-        <BrandMark />
-        <div className="jade-editorial-copy"><span className="jade-eyebrow">CHINESE LEARNING</span><h3>Mandarin,<br />in practice.</h3><p>Study words. Write characters.<br />Learn through songs.</p></div>
+        <BrandMark project={project} />
+        <div className="jade-editorial-copy"><span className="jade-eyebrow">{project.showcase.eyebrow}</span><h3>{project.showcase.headline[0]}<br />{project.showcase.headline[1]}</h3><p>{project.showcase.supportingCopy[0]}<br />{project.showcase.supportingCopy[1]}</p></div>
       </div>
 
         <div className={`jade-primary-screen${songsSelected ? ' jade-primary-screen--film' : ''}`} id={viewerId} aria-label={`${current.label} preview`}>

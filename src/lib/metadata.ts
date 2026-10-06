@@ -1,4 +1,4 @@
-import { getProject, projects } from './projects';
+import { getProject, projects } from '../projects';
 
 export interface PageMetadata {
   title: string;
